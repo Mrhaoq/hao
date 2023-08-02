@@ -5,6 +5,7 @@ npm i postcss-pxtorem@5.1.1
 1.  npm install tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9 -S
 
 2.  创建 vue.config.js
+    ``` 
     module.exports = {
     // css 配置
     css: {
@@ -18,8 +19,12 @@ npm i postcss-pxtorem@5.1.1
     }
     }
     }
-
+    ```
+    
+    
+    
 3.  创建 postcss.config.js
+    ``` 
     module.exports = {
     plugins: {
     'autoprefixer': {
@@ -32,7 +37,10 @@ npm i postcss-pxtorem@5.1.1
     }
     }
     }
-
+    ```
+    
+    
+    
 4.  在 utils/rem.js
 
     function setRem() {
@@ -50,10 +58,11 @@ npm i postcss-pxtorem@5.1.1
 
 5.  main.js
 
+    ``` 
     import { setRem } from './utils/rem'
-
+    
     setRem()
-
+    
     // onresize 回调数组
     window.resizeCallbackList = [setRem]
     window.onresize = () => {
@@ -61,3 +70,7 @@ npm i postcss-pxtorem@5.1.1
     callback()
     })
     }
+    
+    ```
+    
+    
