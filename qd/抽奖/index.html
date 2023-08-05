@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>天命之子选择器</title>
+		<meta name="author" content="AbnerMing" />
+		<link rel="stylesheet" type="text/css" href="./animate.css" />
+		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="./animate.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<article>
+			<p class="text" id="text"></p>
+		</article>
+		<div class="div_bottom">
+			<div id="btn">选择天命之子</div>
+			<div class="reset">重置</div>
+		</div>
+
+		<script type="text/javascript">
+			$(function () {
+				$.get("data.txt", function (data, status) {
+					var json = JSON.parse(data);
+					if (json.status == "0000") {
+						//成功
+						var result = json.result;
+						var content = "";
+						for (var i = 0; i < result.length; i++) {
+							var con = result[i];
+							content = content + con + " ";
+						}
+						$(".text").text(content);
+						var neontext = new Animate("text");
+						neontext.render.run();
+						$("#btn").click(function () {
+							if (isClick) {
+								randomNum(result);
+								isClick = false;
+							} else {
+								isClick = true;
+							}
+							neontext.render.killer(isClick);
+						});
+					} else {
+						alert(json.message); //否则给出提示
+					}
+				});
+
+				var isClick = true;
+
+				//去重
+				function randomNum(nameArr) {
+					var size = nameArr.length;
+					var a = 0;
+					while (true) {
+						a++;
+						var num = Math.floor(Math.random() * size);
+						var name = localStorage.getItem("name");
+						if ((name + "").indexOf(num) == -1) {
+							localStorage.setItem("name", name + "=" + num);
+							localStorage.setItem("vip", nameArr[num]);
+							break;
+						}
+						if (a == size - 1) {
+							alert("所有人都抽完了！");
+							localStorage.setItem("vip", "");
+							break; //停止
+						}
+					}
+				}
+
+				$(".reset").click(function () {
+					localStorage.setItem("name", "");
+					localStorage.setItem("vip", "");
+					alert("重置成功");
+				});
+			});
+		</script>
+	</body>
+</html>
