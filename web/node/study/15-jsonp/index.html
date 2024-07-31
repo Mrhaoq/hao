@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<!-- jsonp 调用 -->
+
+		<script>
+			var oscript = document.createElement("script");
+			oscript.src = "http://localhost:3000/list?callback=Ethen";
+
+			document.body.appendChild(oscript);
+
+			function Ethen(data) {
+				console.log("Ethen function called with data:", data);
+			}
+		</script>
+	</body>
+</html>
