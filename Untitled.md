@@ -1,12 +1,20 @@
-curl 'http://test.qdcloud.qybh.top/admin-api/system/tenant/create' \
-  -H 'Accept: application/json, text/plain, */*' \
-  -H 'Accept-Language: zh-CN,zh;q=0.9' \
-  -H 'Authorization: Bearer 4f1815dcf5dd48848eec14580909743a' \
-  -H 'Content-Type: application/json' \
-  -H 'Origin: http://localhost' \
-  -H 'Proxy-Connection: keep-alive' \
-  -H 'Referer: http://localhost/' \
-  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36' \
-  -H 'tenant-id: 1' \
-  --data-raw '{"name":"test","packageId":111,"contactName":"test","contactMobile":"18348085123","accountCount":34,"expireTime":1721232000000,"businessType":3,"status":0,"username":"hao","password":"1234"}' \
-  --insecure
+fetch("http://localhost:8081/dev-api/order/ap-order/list?pageNum=1&pageSize=10", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "zh-CN,zh;q=0.9",
+    "authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjM5YzAzZDM5LTJmNWMtNDE0NS04MGJkLWM5NzM3ZTBkMGFkYSJ9.8ZbbgF2t9hCf1uJfd1NKO6khcfzuyrSxgPfrdExSGBB17p-gpvHAwJg5Dq0yN8V5Bs97MTf5XnqmMKkinGRYCw",
+    "content-type": "application/json;charset=UTF-8",
+    "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin"
+  },
+  "referrer": "http://localhost:8081/supplierOrder",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": "{\"pageSize\":10,\"pageNum\":1}",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});
