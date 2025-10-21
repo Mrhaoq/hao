@@ -1,0 +1,236 @@
+# 前端 SSO、RBAC/ABAC 与审计执行链指南
+
+**结论先讲：**  
+不要把“登录 → 路由守卫 → token”当作三个孤立的点看，而要把它们串成一条可验证的执行链。按下面顺序去读代码并搭建骨架，你能迅速判断一个项目在 SSO（*Single Sign-On*）、RBAC（*Role-Based Access Control*）+ ABAC（*Attribute-Based Access Control*）、数据权限与审计下是否保持一致性。
+
+---
+
+## 一、从哪里看：按执行链逐层定位
+
+以下 7 层是一个完整的前端权限与审计执行链，每层都包括目标、代码线索与必查点。
+
+| 层次                 | 目标                                                  | 代码线索                                                     | 必查点                                                       |
+| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 1. 会话与令牌层      | 谁在管 token、如何刷新、跨标签页同步、与 SSO 回跳衔接 | `stores/auth.ts`<br/>`composables/useAuthSession.ts`<br/>`utils/oidc.ts`<br/>`/auth/callback` 路由 | - Code+PKCE 流程（loginRedirect、callback 解析、state/nonce 校验）<br/>- 刷新策略（rotate、单航班并发、时钟偏移±5min）<br/>- 持久化：内存优先+持久化兜底，Storage 隔离作用域+XSS 基线<br/>- 跨页同步：BroadcastChannel 或 storage 事件 |
+| 2. 策略与权限层      | 前端如何把“角色+属性+数据范围”编译成可执行检查        | `stores/perm.ts`<br/>`services/policy.ts`<br/>策略表达式：`role:[]`、`attrs:{}`、`dataScope:{}` | - 策略缓存失效与热更新（审批通过/撤销后即时生效）            |
+| 3. 路由守卫层        | 入口拦截、动态路由注入、403 分流                      | `router/index.ts`：`beforeEach`、`beforeResolve`、`afterEach`、`addRoute` | - Meta 约定：`requiresAuth`、`roles`、`attrs`、`dataScope`、`audited`<br/>- 未登录→保存意图路由→SSO 跳转→回跳恢复<br/>- 首次登录后拉策略并注入动态路由；失败兜底到 403/申请权限页 |
+| 4. 组件/按钮可见性层 | 页面进入≠可操作；按钮/区块按策略显隐/禁用             | `directives/permit.ts`<br/>`<Permit>` 组件、`v-permit` 指令  | - 显隐与禁用两种模式<br/>- 空状态 & 引导申请临时授权         |
+| 5. 网络请求层        | 注入令牌、数据范围、幂等与审计标识；统一处理 401/403  | `utils/http.ts`：interceptors、重试器                        | - 注入 `Authorization`、`X-Tenant-Id`/`X-Org-Id`、`X-Data-Scope`<br/>- 401→单航班刷新+重放请求；403→申请权限弹窗/跳转审批页<br/>- 请求关联 ID（`X-Request-Id`）与写操作幂等键 |
+| 6. 数据范围上下文    | 租户/组织/项目切换与查询参数过滤一致                  | `contexts/scope.ts`、`ScopeSwitcher.vue`                     | - 切换后缓存失效<br/>- 列表/导出与当前 scope 同步            |
+| 7. 审计与取证层      | 串起“路由→按钮→请求→结果”的全链路                     | `services/audit.ts`<br/>`router.afterEach`<br/>`axios.interceptors` | - 事件字段最小完备集<br/>- 批量/失败重传、隐私过滤<br/>- 与后端 `traceId` 关联 |
+
+---
+
+## 二、最小可行骨架（Vue3 + Pinia + Router + Axios）
+
+下面提供关键机制的示例（变量名可自适配），以便快速落地。
+
+### 1. useAuthSession（会话/令牌/刷新/跨页）
+
+```ts
+const state = reactive({
+  accessToken: null,
+  refreshToken: null,
+  expiresAt: 0,
+  user: null,
+  refreshing: false
+});
+
+function login(redirectTo: string) {
+  saveIntent(redirectTo);
+  return oidc.loginRedirect();
+}
+
+async function handleCallback() {
+  const tokens = await oidc.parseCallback();
+  verifyStateNonce(tokens);
+  Object.assign(state, tokens);
+  await loadUserAndPolicy();
+  restoreIntent();
+}
+
+async function getValidAccessToken() {
+  const skew = 30000; // 30s 余量
+  if (Date.now() < state.expiresAt - skew) {
+    return state.accessToken;
+  }
+  return await singleFlightRefresh();
+}
+
+function singleFlightRefresh() {
+  if (state.refreshing) {
+    return waitForExistingPromise();
+  }
+  state.refreshing = true;
+  return oidc.refresh()
+    .then(t => Object.assign(state, t))
+    .finally(() => { state.refreshing = false; });
+}
+
+// 跨页同步
+useBroadcastChannel('auth', msg => {/* 更新或登出逻辑 */});
+window.addEventListener('storage', /* 兜底处理 */);
+```
+
+### 2. 路由守卫（基于 meta 的统一判断）
+
+```ts
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.public) {
+    return next();
+  }
+  if (!auth.isAuthenticated()) {
+    return auth.login(to.fullPath);
+  }
+  if (!perm.initialized) {
+    await perm.init(); // 拉策略并编译
+  }
+  if (!perm.allowsRoute(to)) {
+    return next({ name: '403', query: { need: perm.missingOf(to) } });
+  }
+  return next();
+});
+
+router.afterEach((to, from) => {
+  audit.routeNavigated({ to, from });
+});
+```
+
+### 3. 权限指令 v-permit（按钮/区块显隐）
+
+```ts
+app.directive('permit', {
+  mounted(el, binding) {
+    const allowed = perm.check(binding.value); // roles/attrs/action
+    if (!allowed) {
+      el.style.display = 'none'; // 或禁用并展示申请入口
+    }
+  }
+});
+```
+
+### 4. Axios 拦截器（令牌/范围/审计/错误一致性）
+
+```ts
+http.interceptors.request.use(async cfg => {
+  cfg.headers['Authorization'] = 'Bearer ' + await auth.getValidAccessToken();
+  cfg.headers['X-Request-Id'] = genId();
+  cfg.headers['X-Tenant-Id'] = scope.tenantId;
+  if (scope.dataScope) {
+    cfg.headers['X-Data-Scope'] = JSON.stringify(scope.dataScope);
+  }
+  audit.attachContext(cfg);
+  return cfg;
+});
+
+http.interceptors.response.use(
+  res => {
+    audit.onApiOk(res);
+    return res;
+  },
+  async err => {
+    const { config, response } = err;
+    if (response?.status === 401 && !config._retried) {
+      config._retried = true;
+      await auth.refresh();
+      return http(config);
+    }
+    if (response?.status === 403) {
+      audit.onForbidden(config, response);
+    }
+    audit.onApiError(err);
+    throw err;
+  }
+);
+```
+
+### 5. 数据范围上下文（provide/inject）
+
+```ts
+const ScopeSymbol = Symbol('scope');
+
+export function provideScope() {
+  const s = reactive({
+    tenantId: null,
+    orgId: null,
+    projectId: null,
+    dataScope: null
+  });
+  provide(ScopeSymbol, s);
+  return s;
+}
+
+export function useScope() {
+  return inject(ScopeSymbol)!;
+}
+```
+
+### 6. 审计客户端（事件最小集）
+
+- **事件字段**：`ts`、`actorId`、`sessionId`、`route`、`action`、`objectType/objectId`、`requestId`、`result`、`evidenceHash`、`clientMeta`
+- **挂点**：`router.afterEach`、Axios 请求/响应 拦截、关键按钮点击
+- **机制**：批量上报、失败重传、隐私字段白名单过滤
+
+---
+
+## 三、额外重点注意
+
+- **Token 存储与浏览器约束**  
+  - 优先内存+刷新；若用 Storage，需严格 CSP、依赖白名单、避免 URL 泄露  
+  - 第三方 Cookie/ITP 限制 silent refresh 时：短期 token + 前端定时刷新 + 回跳兜底  
+- **动态路由与菜单一致性**  
+  同一策略源渲染侧边栏菜单，避免“菜单可见但路由被 403”或反之  
+- **401/403 用户体验统一**  
+  - 401：静默刷新→失败再登录（保留意图）  
+  - 403：展示缺失权限 & 临时授权入口，审批通过后无需刷新即可生效  
+- **并发与竞态控制**  
+  单航班刷新；审批 T+0 生效；租户切换时取消过期请求并清除缓存  
+- **导出/批量操作**  
+  列表筛选条件与导出接口参数保持一致；审计记录导出过滤条件哈希  
+- **可观测性与回放**  
+  为登录回跳、刷新、守卫拦截、403 分流产生日志，串起 traceId 便于取证  
+
+---
+
+## 四、快速检视清单（grep 关键词）
+
+- 登录/回调：`loginRedirect`、`/auth/callback`、PKCE、state/nonce  
+- 刷新：`refresh`、`expiresAt`、单航班、401 重试  
+- 策略：`roles`、`attributes`、`policy`、`can()`/`allows()`  
+- 路由：`requiresAuth`、`beforeEach`、`addRoute`、403  
+- 指令：`v-permit` 或组件 `<Permit>`  
+- 范围：`tenantId`/`orgId`/`projectId`、`ScopeSwitcher`、`X-Data-Scope`  
+- 审计：`audit`、`traceId`/`requestId`、`afterEach`、`interceptors`
+
+---
+
+## 五、边界用例（最容易出问题的 10 项）
+
+1. Access token 剩余 <30s 时导航新页面  
+2. 刷新进行中，用户再次发请求导致并发重放  
+3. 多标签页登出/续期同步失效  
+4. 租户切换后旧请求返回覆盖新数据（需基于 scope 校验丢弃）  
+5. 审批通过/撤销在当前会话即时生效（策略热更新、UI 重算）  
+6. 离线→在线恢复时批量补发审计事件去重  
+7. 403 后用户申请权限→通过→原页面无需刷新即可操作  
+8. 浏览器时间慢 5 分钟（刷新时提前，过期判断容错）  
+9. iOS 前后台切换导致定时器暂停（回前台先检查有效期再发请求）  
+10. 回跳时携带的 redirect 被污染或过期（校验来源并有安全默认落点）  
+
+---
+
+## 六、落地顺序与验收要点
+
+| 周次  | 内容                                          | 验收标准                   |
+| ----- | --------------------------------------------- | -------------------------- |
+| 第1周 | 会话与刷新（含跨页同步）+ 401/403 统一处理    | 登录回跳→刷新→401/403 走通 |
+| 第2周 | 路由 meta 设计 + 动态路由注入 + v-permit      | 路由可达 & 按钮可见        |
+| 第3周 | 数据范围上下文 + Axios 注入 + 导出一致性      | 列表与导出参数一致         |
+| 第4周 | 审计 SDK 接入 + 关键操作埋点 + 批量上报与重传 | 审计能还原关键操作全链路   |
+
+**整体验收标准：**  
+在相同策略下，“路由可达、按钮可见、API 可用”三者保持一致；上述 10 个边界用例全部通过；审计能串起一条关键操作的完整链路。
+
+---
+
+*需要的话，可提供一个最小可运行示例（Vue3 + Pinia + Router + Axios），只需替换 OIDC 与后端接口即可接入现有项目。*
