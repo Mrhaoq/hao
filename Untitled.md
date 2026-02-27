@@ -1,141 +1,74 @@
-```js
-<template>
-  <div class="home" v-loading="loading">
-    <li class="home-title">查看采购单</li>
-    <div class="header block mb20">
-      <div>
-        <div>
-          订单状态：
-          <span style="color: #3774f7">
-            {{ data.status }}
-          </span>
-        </div>
+郝高尚
+学历：本科 | 工作经验：3.5 年
+手机：18348085123 | 邮箱：hao_gaoshang@163.com
 
-        <el-button class="reset-btn" @click="$router.go(-1)">返回</el-button>
-      </div>
+## 个人技能
 
-      <el-row :gutter="20" class="mb15">
-        <el-col :span="6"> 订单编号：{{ data.id }} </el-col>
+**1. 核心技术栈**
+- 熟练掌握 Vue2/Vue3 + TypeScript 全生态开发，Vuex/Pinia、Vue Router，深度理解响应式原理与组合式 API；HTML5、CSS3、ES6+，能基于业务完成高复用、高扩展的前端开发。
 
-        <el-col :span="6" v-if="data.status == 1 && data.payType">
-          支付方式：{{ payTypeObj[data.payType] }}
-        </el-col>
+**2. UI 与组件能力**
+- Element-UI/ElementPlus、Ant-Design、Vant、uView/uViewPlus、Swiper、Echarts 等；具备组件二次封装与自定义组件库设计能力，可独立完成 UI 还原至交互逻辑全流程。
 
-        <el-col :span="6" v-if="data.status != 0 && data.payType == 4">
-          完成时间：{{ data.completeTime }}
-        </el-col>
-      </el-row>
+**3. 跨端与小程序**
+- 熟练使用 uni-app 多端框架，具备微信/支付宝小程序从 0 到 1 搭建、分包、真机联调、线上运维经验；掌握授权、支付、地图定位、分包加载及多端兼容适配。
 
-      <el-row :gutter="20" class="mb15">
-        <el-col :span="6">送货运力：{{ data.agentName || "-" }}</el-col>
-        <el-col :span="6"> 运力电话：{{ data.agentPhone || "-" }} </el-col>
-      </el-row>
+**4. 工程化与架构**
+- 熟悉 webpack/vite，可独立完成前端架构搭建、工程化规范、多环境配置；有 npm 公共包开发与维护经验；可搭建 ESLint/Prettier/TypeScript 代码质量体系。
 
-      <el-row :gutter="20" class="mb15">
-        <el-col :span="6">
-          订单总重量：
-          {{ fmtNumFloor(data.weight / 1000, 3) }} 吨
-        </el-col>
+**5. 性能优化与业务能力**
+- 落地过懒加载、动态引入、分包、CDN、防抖节流、缓存、WebSocket 替代轮询、虚拟列表等优化；熟悉权限管控、动态路由、数字精度处理、异常兜底。
 
-        <template v-if="data.status != 2 && invoiceFlag && data.isInvoice">
-          <el-col :span="6">
-            货款押金：{{ fmtNumFloor(data.matchAmount + data.remainAmount, 2) }}
-          </el-col>
+**6. 协作与工具**
+- Axios 请求封装、Postman/ApiFox 调试、Git 协作；了解 Node.js/Express、React、大屏可视化与 DataV。
 
-          <el-col :span="6">
-            自营货款：{{ fmtNumFloor(data.matchAmount + data.remainAmount, 2) }}
-          </el-col>
+## 工作经历
 
-          <el-col :span="6" v-if="data.transportAmount > 0">
-            转运服务费：{{ fmtNumFloor(data.transportAmount, 2) }}
-          </el-col>
-        </template>
+- **项目与架构**：独立负责 6 个核心项目从 0 到 1 的前端架构搭建，覆盖多端小程序、SaaS 管理后台、企业官网，主导 ToB/ToC 全产品线前端开发与架构维护，保障业务全流程线上化稳定运行。
+- **组件与基建**：设计并封装 15+ 高复用业务组件，开发通用工具方法库并发布 npm 包，多项目复用，团队研发效率提升 30%，代码复用率从 35% 提升至 80%。
+- **请求与性能**：落地统一请求封装（缓存、防抖节流、错误重试、token 无感刷新），接口重复请求量降低 60%；主导性能优化专项，首屏加载时间降低 40%，服务器请求压力降低 45%。
+- **权限体系**：设计通用前端权限管控模块，支持多角色动态路由、按钮级权限控制，覆盖全业务线使用。
 
-        <template v-else>
-          <el-col :span="6">
-            订单总金额：
-            {{ fmtNumFloor(data.amount, 2) }}
-          </el-col>
-        </template>
-      </el-row>
+## 项目经历
 
-      <template>
-        <el-divider></el-divider>
+### 项目一：千源百荟再生资源回收全链路前端体系（官网 + ToC 小程序）
+技术栈：Vue3 + TypeScript + Vite + Pinia + Vue Router + ElementPlus + uni-app + uView
+开发时间：2025.06 - 至今
+项目背景：项目包含企业官网与 ToC 端微信小程序，是公司核心业务载体。官网负责品牌展示、业务介绍、客户入驻与线上报价下单；小程序面向 C 端用户提供废旧电池上门回收、电池租赁换新、救援维修、订单管理、在线支付等核心服务，覆盖废旧电池回收全业务流程。
+核心职责与技术落地：
 
-        <el-steps :active="active" align-center style="margin-top: 20px">
-          <el-step
-            title="发起采购单"
-            :description="data.createOn"
-            icon="el-icon-success"
-          >
-          </el-step>
+1. 独立负责项目从 0 到 1 的前端架构搭建，完成技术栈选型、脚手架搭建、路由与状态管理设计、统一请求封装、多环境配置、代码规范体系落地等全流程工作，搭建了高可扩展的前端基础架构。
+2. 完成官网访客端（品牌介绍、服务展示、新闻资讯、门店查询）与用户端（账户中心、实名认证、报价下单、订单管理、钱包支付）全模块开发，以及小程序端登录授权、地图定位导航、订单流程、微信支付、地址管理等核心业务功能开发。
+3. 主导项目组件化与工程化建设，封装 qd-\* 通用业务组件库（地址选择、Banner 轮播、表单控件、弹窗交互等），抽象订单支付、用户授权、错误处理等通用业务逻辑，大幅提升代码复用率与开发效率。
+4. 负责项目全流程性能优化与兼容性适配，通过业务分包、图片懒加载与 CDN 加速、组件动态引入、请求防抖节流等方案，解决小程序包体积超限、首屏加载慢的问题；完成多机型、多版本小程序的兼容性适配，保障线上业务稳定运行。
 
-          <el-step
-            :title="
-              data.status == 2
-                ? '已取消'
-                : data.payType == 4
-                ? '已入库'
-                : '支付金额并完成'
-            "
-            :description="
-              data.cancelTime || data.payTime || data.completeTime || '-'
-            "
-            icon="el-icon-success"
-          >
-          </el-step>
-        </el-steps>
-      </template>
-    </div>
-  </div>
-</template>
+### 项目二：铅蛋回收多端小程序（微信 + 支付宝）
+技术栈：uni-app + Vue2/Vue3 + TypeScript + Vite + Pinia/Vuex + uView/uViewPlus
+开发时间：2022.10 - 至今
+项目背景：公司核心业务产品，覆盖废旧电池回收全链路的 ToB+ToC 综合小程序，包含门店、运力、回收公司、消费者、业务员等多角色，实现电池投售、订单分配、上门回收、支付结算全流程线上化，同步上线微信、支付宝双端。
+核心职责与技术落地：
 
-<script>
-export default {
-  name: "PODetail",
-  data() {
-    return {
-      loading: false,
+1. 独立负责双端小程序从 0 到 1 的前端架构搭建，完成技术栈选型、项目脚手架搭建、路由与状态管理、统一请求封装、多端兼容性适配等基础能力建设，按业务模块完成分包处理，优化单包体积与加载性能。
+2. 主导核心业务模块开发，实现消费者端电池租赁、上门换新、救援维修、微信 / 支付宝支付、地图定位导航，以及 B 端门店投售、运力接单、回收公司订单分配等全流程功能，完成与后端全模块 API 对接与真机联调。
+3. 搭建项目组件化体系，二次封装 uView 基础组件，自定义地址选择、时间选择、Banner、弹窗、表单等 10 + 通用业务组件，抽象订单支付、用户授权登录、错误码统一处理等通用逻辑，大幅提升代码复用性与迭代效率。
+4. 落地全链路性能优化方案：通过图片 CDN 加速 + 懒加载、代码分割与动态引入、虚拟列表与分页加载优化 DOM 渲染、请求防抖节流与本地缓存策略降低接口请求频率，解决了长列表卡顿、首屏加载慢等核心问题，显著提升小程序运行流畅度。
+5. 负责项目全生命周期管理，包括需求评审、开发联调、测试修复、打包发布、线上问题排查，独立解决了定位授权异常、支付失败状态回退、订单状态同步延迟等线上问题，保障线上业务稳定运行。
 
-      data: {},
+### 项目三：铅蛋回收 SaaS 管理后台体系（客户后台 + 总管理后台）
+技术栈：Vue2 + Element-UI + Vue Router + Vuex + SASS + Webpack
+开发时间：2022.09 - 至今
+项目背景：支撑公司回收业务的双后台体系，包含面向 B 端客户的客户后台、面向公司内部运营的总管理后台，覆盖回收公司、代理商、中间商、内部运营等多角色，实现角色权限管理、订单全流程管控、用户管理、数据统计、财务结算等核心能力。
+核心职责与技术落地：
 
-      orderInfoList: [],
-    };
-  },
+1. 独立负责双后台全流程前端开发，从 0 到 1 完成项目架构搭建、技术选型、基础能力封装与全业务模块开发，落地代码规范与工程化配置，保障多环境稳定构建与发布。
+2. 设计并实现精细化前端权限管控体系，基于用户角色实现动态路由加载、页面级访问权限控制，通过自定义 v-has 指令实现按钮级操作权限管控，满足多角色差异化权限需求，覆盖全系统 20 + 功能模块。
+3. 完成核心业务能力封装：二次封装 Axios 请求，集成统一异常处理、超时重试、loading 管理、成功 / 失败提示等能力，封装 $handleApiCall 通用调用方法，减少页面 80% 重复代码；引入 Big.js 解决金融计算小数精度问题，封装数字千分位格式化、输入框限制、表单校验等通用方法，覆盖全系统使用。
+4. 落地多项性能与体验优化方案：通过 localStorage 实现全国地区数据本地缓存，减少重复接口请求；基于 WebSocket 实现大数据量导出功能的实时状态同步，解决了大文件导出接口超时、无状态反馈的问题；封装防抖自定义指令 v-deb，避免用户重复操作导致的接口重复提交。
+5. 负责系统持续迭代与优化，完成 iframe 对接支付宝支付体系、操作日志记录、数据导出 Excel/PDF、角色新建与权限分配等核心功能，持续优化代码结构与页面交互体验。
 
-  methods: {
-    // 获取详情
-    async getDetail() {
-      const res = await this.$handleApiCall(procurementDetail, { id: this.id });
-      if (res.code != 200) return;
-      this.data = res.content;
+## 自我评价
 
-    },
-  },
-};
-</script>
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- **3.5 年** Web 前端与跨端小程序开发经验，深耕 Vue 生态与 TypeScript，具备从 0 到 1 的架构搭建、工程化落地、全链路性能优化能力，可独立负责中大型前端项目的设计、开发与维护。
+- 具备 ToB/ToC 全业务场景经验，理解再生资源回收业务逻辑，擅长结合业务做技术方案设计与优化，通过技术手段解决业务痛点、提升研发效率与体验。
+- 具备组件化、模块化开发思维，有公共组件库、工具库封装经验，注重代码可复用、可维护、可扩展。
+- 责任心强、学习能力好，热衷新技术落地，团队协作与问题排查能力良好，能快速适配业务变化、高效完成交付。
