@@ -1,4 +1,4 @@
-# 目录
+# 	目录
 
 ## 一、基础技术能力
 
@@ -236,8 +236,6 @@
 7. 如果让你从零组建一个前端团队，你会怎么做？
 8. 给你一个现有项目，如何进行技术重构？考虑哪些风险？
 
-# 解答
-
 # 一、HTML/CSS 详细解答
 
 ------
@@ -249,7 +247,7 @@
 - **结构类**：`<header>`（页眉）、`<nav>`（导航）、`<main>`（主体）、`<article>`（独立文章）、`<section>`（区域）、`<aside>`（侧边栏）、`<footer>`（页脚）
 - **内容类**：`<h1>`~`<h6>`（标题）、`<p>`（段落）、`<ul>`/`<ol>`（列表）、`<figure>`/`<figcaption>`（插图及说明）、`<time>`（时间）、`<mark>`（高亮）、`<strong>`（强调）、`<em>`（斜体强调）等
 
-**项目中使用**：
+**项目中使用**：  
 
 - 在**企业官网**（如“千源百荟再生资源回收官网”）中，我大量使用了语义化标签来提升 SEO 和可访问性。例如：
   - 用 `<header>` 包裹顶部导航栏和 Logo，内部嵌套 `<nav>` 实现导航菜单。
@@ -1925,7 +1923,980 @@ export function useDraggable(items, onReorder) {
 - 若列表项高度不固定，需要动态计算每个项的位置，可能使用 `getBoundingClientRect`。
 - 触摸屏需适配 `touch` 事件。
 
-# 三、Vue 核心详细解答
+# 三、TypeScript 详细解答
+
+------
+
+## 1. TypeScript 相比 JavaScript 有哪些优势？你在项目中如何落地？
+
+**TypeScript 的优势**：
+
+1. **静态类型检查**：在开发阶段就能发现类型错误，避免将 bug 带到运行时。例如，函数参数类型不匹配、访问不存在的属性等都能被编译器捕获。
+2. **更好的代码提示和自动补全**：IDE 可以根据类型信息提供精准的智能提示，提升开发效率。
+3. **自文档化**：类型定义本身就是一种文档，明确描述了函数、组件的输入输出，降低团队沟通成本。
+4. **重构友好**：当需要修改接口或组件时，TypeScript 会提示所有使用地方，确保修改安全。
+5. **增强面向对象编程**：支持接口、泛型、装饰器等，适合大型项目架构。
+6. **社区生态完善**：主流框架（Vue、React、Angular）和库都提供了类型定义，方便集成。
+
+**项目中的落地实践**：
+
+- **项目初始化**：在“千源百荟再生资源回收”项目中，从零搭建时就选择了 Vue 3 + TypeScript。通过 `vite` 创建项目时直接选用 TypeScript 模板，确保所有 `.vue` 文件支持 `<script setup lang="ts">`。
+
+- **类型声明文件**：在项目根目录创建 `types` 文件夹，存放全局类型声明（如 `api.d.ts`、`shims-vue.d.ts`），并配置 `tsconfig.json` 的 `typeRoots` 或 `include` 路径。
+
+- **接口定义**：所有 API 请求的请求参数和响应数据都定义明确的 TypeScript 接口，并在服务层中使用。例如：
+
+  typescript
+
+  ```
+  // types/api/order.ts
+  export interface Order {
+    id: string;
+    amount: number;
+    status: 'pending' | 'paid' | 'cancelled';
+    createTime: string;
+  }
+  
+  // api/order.ts
+  import { Order } from '@/types/api/order';
+  export function fetchOrder(id: string): Promise<Order> {
+    return request.get(`/order/${id}`);
+  }
+  ```
+
+  
+
+- **组件 Props 和 Emits 类型化**：在 Vue 组件中使用 `defineProps` 和 `defineEmits` 并指定类型，确保组件使用安全。
+
+  typescript
+
+  ```
+  const props = defineProps<{
+    title: string;
+    count?: number;
+  }>();
+  
+  const emit = defineEmits<{
+    (e: 'update', value: number): void;
+  }>();
+  ```
+
+  
+
+- **状态管理类型化**：Pinia store 中定义 state、getters、actions 的类型，并利用 `defineStore` 泛型自动推断。
+
+- **工具函数封装**：对公共函数（如日期格式化、金额计算）编写完善的类型重载，提升使用体验。
+
+- **严格模式**：在 `tsconfig.json` 中开启 `"strict": true`，全面启用类型检查，包括 `noImplicitAny`、`strictNullChecks` 等。
+
+**效果**：在“铅蛋回收”多端项目中，TypeScript 帮助我们在开发阶段捕获了大量类型错误（如后端接口字段变更未同步），减少了线上 bug，同时新成员上手更快。
+
+------
+
+## 2. interface 和 type 的区别？什么时候用哪个？
+
+**interface 和 type 的异同**：
+
+| 特性     | interface                                   | type                                                         |
+| :------- | :------------------------------------------ | :----------------------------------------------------------- |
+| 基本用法 | 定义对象结构                                | 定义任意类型（基本类型、联合、交叉、元组等）                 |
+| 扩展方式 | `extends` 继承                              | 使用交叉类型 `&`                                             |
+| 合并声明 | **支持同名合并**（声明合并）                | 不支持（同名会报错）                                         |
+| 计算属性 | 不支持                                      | 支持（如 `type Keys = 'a' | 'b'`，然后 `type Obj = { [K in Keys]: number }`） |
+| 映射类型 | 不支持直接，但可通过 `extends` 配合条件类型 | 支持                                                         |
+| 性能     | 接口在类型检查时可能更快（因为缓存）        | 类型别名可能更复杂                                           |
+| 适用范围 | 主要描述对象/函数/类                        | 任意类型                                                     |
+
+**如何选择**：
+
+- **优先使用 `interface`** 当需要描述一个对象的结构（尤其是对外暴露的 API 或 Props），因为它更符合面向对象的设计，且支持声明合并，便于扩展。
+- **使用 `type`** 当需要定义联合类型、交叉类型、元组、基本类型别名，或者需要使用映射类型、条件类型等高级功能时。
+- **对于组件 Props 和 Emits**，在 Vue 中两者皆可，但 `interface` 更能体现“契约”性质。
+
+**项目实例**：
+
+typescript
+
+```
+// 使用 interface 定义 API 响应结构
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+// 声明合并示例：扩展第三方库类型
+interface Window {
+  myGlobalVar: string;
+}
+
+// 使用 type 定义联合类型
+type OrderStatus = 'pending' | 'paid' | 'shipped' | 'completed';
+
+// 使用 type 定义交叉类型（组合多个接口）
+type ExtendedProps = PropsA & PropsB & { extra: number };
+
+// 使用 type 定义元组
+type Point = [number, number];
+```
+
+
+
+**总结**：没有绝对标准，团队可制定规范。我通常在项目中约定：对外暴露的 Props、状态、API 使用 `interface`，内部工具类型、联合类型使用 `type`。
+
+------
+
+## 3. 如何定义复杂的对象类型？联合类型、交叉类型的使用场景？
+
+**定义复杂对象类型**：可以使用嵌套接口、类型别名、交叉类型、联合类型、索引签名、映射类型等。
+
+- **嵌套接口**：
+
+  typescript
+
+  ```
+  interface Address {
+    province: string;
+    city: string;
+    district: string;
+  }
+  interface User {
+    name: string;
+    address: Address;
+  }
+  ```
+
+  
+
+- **索引签名**：当对象属性名不确定但值类型固定时。
+
+  typescript
+
+  ```
+  interface Dict<T> {
+    [key: string]: T;
+  }
+  const dict: Dict<number> = { a: 1, b: 2 };
+  ```
+
+  
+
+- **联合类型**：一个值可以是多种类型之一。常用于状态枚举、多种可能的数据结构。
+
+  typescript
+
+  ```
+  type Result = Success | Failure;
+  interface Success { status: 'success'; data: any; }
+  interface Failure { status: 'failure'; error: string; }
+  ```
+
+  
+
+- **交叉类型**：将多个类型合并为一个类型，包含所有成员。常用于组合多个接口。
+
+  typescript
+
+  ```
+  type Person = { name: string } & { age: number }; // { name: string; age: number }
+  type Admin = User & { permissions: string[] };
+  ```
+
+  
+
+- **映射类型**：基于旧类型创建新类型。
+
+  typescript
+
+  ```
+  type Readonly<T> = { readonly [P in keyof T]: T[P] };
+  type Partial<T> = { [P in keyof T]?: T[P] };
+  ```
+
+  
+
+**项目中的应用**：
+
+- **联合类型**：在“铅蛋回收”小程序中，订单状态有多种可能，使用联合类型确保状态赋值正确。
+
+  typescript
+
+  ```
+  type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'refunding' | 'completed';
+  ```
+
+  
+
+- **交叉类型**：在 Vue 组件中，需要组合公共 props 和自定义 props 时：
+
+  typescript
+
+  ```
+  import type { BaseProps } from '@/types';
+  type MyComponentProps = BaseProps & { title: string };
+  ```
+
+  
+
+- **复杂嵌套**：定义从接口返回的深层嵌套数据，如：
+
+  typescript
+
+  ```
+  interface OrderDetail {
+    orderInfo: Order;
+    items: Array<{
+      productId: string;
+      name: string;
+      price: number;
+      quantity: number;
+    }>;
+    logistics?: {
+      company: string;
+      trackingNo: string;
+    };
+  }
+  ```
+
+  
+
+**注意**：当使用交叉类型时，如果多个类型有同名属性且类型冲突，结果可能为 `never`，需谨慎设计。
+
+------
+
+## 4. 什么是泛型？你在项目中哪些地方使用了泛型？
+
+**泛型（Generics）** 是指在定义函数、接口、类时不预先指定具体类型，而是在使用时再指定类型的一种特性。它增加了代码的复用性，同时保留类型安全性。
+
+**基本语法**：
+
+typescript
+
+```
+function identity<T>(arg: T): T {
+  return arg;
+}
+const output = identity<string>('hello'); // 显式指定
+const output2 = identity('world'); // 类型推断
+```
+
+
+
+**项目中的使用场景**：
+
+1. **封装通用请求函数**：
+
+   typescript
+
+   ```
+   // request.ts
+   export function request<T>(config: AxiosRequestConfig): Promise<T> {
+     return axios(config).then(res => res.data as T);
+   }
+   
+   // 使用
+   interface User { id: string; name: string; }
+   const user = await request<User>({ url: '/user/123' });
+   ```
+
+   
+
+2. **定义通用 API 响应类型**：
+
+   typescript
+
+   ```
+   interface ApiResponse<T> {
+     code: number;
+     message: string;
+     data: T;
+   }
+   
+   // 使用
+   const res = await axios.get<ApiResponse<User[]>>('/users');
+   ```
+
+   
+
+3. **封装可复用的 Vue 组合式函数**：
+
+   typescript
+
+   ```
+   import { ref } from 'vue';
+   
+   function useList<T>(fetchFn: () => Promise<T[]>) {
+     const list = ref<T[]>([]);
+     const loading = ref(false);
+     const load = async () => {
+       loading.value = true;
+       list.value = await fetchFn();
+       loading.value = false;
+     };
+     return { list, loading, load };
+   }
+   
+   // 使用
+   interface Product { id: number; name: string; }
+   const { list, loading } = useList<Product>(fetchProducts);
+   ```
+
+   
+
+4. **定义泛型组件**：Vue 组件可以通过 `defineProps` 结合泛型（需要 Vue 3.3+）。
+
+   typescript
+
+   ```
+   const props = defineProps<{
+     items: T[];
+     renderItem: (item: T) => any;
+   }>();
+   ```
+
+   
+
+5. **工具函数**：如深拷贝、防抖等，保持类型。
+
+   typescript
+
+   ```
+   function deepCopy<T>(obj: T): T {
+     return JSON.parse(JSON.stringify(obj));
+   }
+   ```
+
+   
+
+6. **Pinia store 定义**：`defineStore` 本身也是泛型，可以指定 state 类型。
+
+**优势**：在“铅蛋回收”项目中，我们大量使用泛型封装通用逻辑，既保证了类型安全，又避免了为每种类型重复编写代码。
+
+------
+
+## 5. 介绍 TypeScript 中的装饰器。你在项目中用过吗？用于什么场景？
+
+**装饰器（Decorators）** 是一种特殊类型的声明，它可以附加到类、方法、属性、参数上，以修改它们的行为。装饰器使用 `@expression` 语法，`expression` 求值后必须为一个函数，在运行时被调用。
+
+TypeScript 中的装饰器类型：
+
+- 类装饰器
+- 方法装饰器
+- 访问器装饰器（getter/setter）
+- 属性装饰器
+- 参数装饰器
+
+**启用装饰器**：需要在 `tsconfig.json` 中开启 `"experimentalDecorators": true`。
+
+**项目中的应用**：
+
+在“铅蛋回收”项目中，我们使用 **类装饰器** 和 **方法装饰器** 来实现：
+
+1. **方法装饰器：自动捕获异常并上报**。
+
+   typescript
+
+   ```
+   function CatchError(message: string = '操作失败') {
+     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+       const originalMethod = descriptor.value;
+       descriptor.value = async function (...args: any[]) {
+         try {
+           return await originalMethod.apply(this, args);
+         } catch (error) {
+           console.error(error);
+           Toast.fail(message);
+           // 上报错误
+           reportError(error);
+         }
+       };
+       return descriptor;
+     };
+   }
+   
+   // 使用
+   class OrderService {
+     @CatchError('获取订单失败')
+     async fetchOrder(id: string) {
+       return await request(`/order/${id}`);
+     }
+   }
+   ```
+
+   
+
+2. **类装饰器：为类添加静态属性或方法**，例如标记组件的名称。
+
+   typescript
+
+   ```
+   function ComponentName(name: string) {
+     return function (constructor: Function) {
+       constructor.prototype.componentName = name;
+     };
+   }
+   
+   @ComponentName('user-card')
+   class UserCard {}
+   ```
+
+   
+
+3. **属性装饰器：对属性进行默认值设置或监听**，但在实际项目中较少使用，因为 Vue 的响应式系统已经提供了类似功能。
+
+4. **参数装饰器**：在框架底层可能会用到，比如依赖注入框架（如 InversifyJS）。在我们的业务代码中较少直接使用。
+
+**注意事项**：
+
+- 装饰器目前仍是实验性特性，未来可能变化。
+- 在 Vue 3 中，由于 Composition API 的普及，装饰器使用场景减少（Vue 官方推荐使用组合式函数代替类装饰器模式）。但在一些需要面向对象设计的服务层或工具库中，装饰器仍然有用。
+
+------
+
+## 6. 如何配置 tsconfig.json？常用的配置项有哪些？
+
+**tsconfig.json** 是 TypeScript 项目的配置文件，用于指定编译选项和项目文件。
+
+**常用配置项**：
+
+json
+
+```
+{
+  "compilerOptions": {
+    /* 基本选项 */
+    "target": "ESNext",               // 指定 ECMAScript 目标版本
+    "module": "ESNext",                // 指定模块代码生成
+    "lib": ["ESNext", "DOM", "DOM.Iterable"], // 编译时包含的库文件
+    "jsx": "preserve",                 // JSX 代码生成方式（用于 React）
+    "outDir": "./dist",                 // 输出目录
+    "rootDir": "./src",                 // 输入文件的根目录
+    "strict": true,                     // 启用所有严格类型检查选项
+    "esModuleInterop": true,             // 允许 CommonJS 和 ES 模块之间的互操作
+    "skipLibCheck": true,                // 跳过所有声明文件的类型检查
+    "forceConsistentCasingInFileNames": true, // 强制文件名大小写一致
+
+    /* 模块解析选项 */
+    "moduleResolution": "node",          // 模块解析策略
+    "resolveJsonModule": true,           // 允许导入 JSON 文件
+    "isolatedModules": true,              // 确保每个文件都是独立模块（用于 Babel 转译）
+    "allowSyntheticDefaultImports": true, // 允许从没有默认导出的模块中默认导入
+
+    /* 类型检查选项 */
+    "noImplicitAny": true,                // 禁止隐式 any 类型
+    "strictNullChecks": true,              // 启用严格的 null 检查
+    "strictFunctionTypes": true,           // 检查函数参数双向协变
+    "strictBindCallApply": true,           // 对 bind/call/apply 进行严格检查
+    "noImplicitThis": true,                // 禁止隐式 any 的 this
+    "alwaysStrict": true,                  // 在代码中注入 "use strict"
+
+    /* 额外检查 */
+    "noUnusedLocals": true,                // 报告未使用的局部变量
+    "noUnusedParameters": true,             // 报告未使用的函数参数
+    "noImplicitReturns": true,              // 检查函数是否所有路径都有返回值
+    "noFallthroughCasesInSwitch": true,     // 检查 switch 语句的 fallthrough
+
+    /* 路径映射 */
+    "baseUrl": ".",                         // 解析非相对模块名的基准目录
+    "paths": {                              // 路径映射
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist"]
+}
+```
+
+
+
+**项目中的配置**：
+
+在 Vue 3 + TypeScript 项目中，我们通常会：
+
+- 开启 `"strict": true`，确保类型安全。
+- 设置 `"baseUrl": "."` 和 `"paths"` 映射，配合 Vite 别名。
+- `"lib"` 包含 `"ESNext"` 和 `"DOM"`，适应浏览器环境。
+- `"skipLibCheck": true` 加快编译速度。
+- `"isolatedModules": true` 确保能被 Babel 或 Vite 正确转译。
+
+**针对 Vue 的特殊配置**：
+
+- 在 `include` 中加入 `"src/**/*.vue"`，并需要配合 `vue-tsc` 进行类型检查。
+- 设置 `"jsx": "preserve"` 以支持 Vue JSX。
+
+------
+
+## 7. 如何为第三方库编写类型声明文件？
+
+当使用的第三方库没有提供 TypeScript 类型定义（或类型定义不准确）时，我们需要自己编写类型声明文件。
+
+**方式一：在项目内添加声明文件（.d.ts）**
+
+1. **创建声明文件**：在项目中创建 `types` 文件夹，例如 `types/some-lib.d.ts`。
+
+2. **编写模块声明**：
+
+   typescript
+
+   ```
+   // types/some-lib.d.ts
+   declare module 'some-lib' {
+     export function someFunction(param: string): number;
+     export const someValue: string;
+     export interface SomeInterface {
+       name: string;
+     }
+   }
+   ```
+
+   
+
+3. **确保 TypeScript 能识别**：在 `tsconfig.json` 的 `include` 中包含该文件夹，或者配置 `typeRoots`。
+
+**方式二：使用 `declare` 全局声明**
+
+如果库是全局暴露的（如挂载到 `window` 上），可以在全局声明文件中扩展全局对象：
+
+typescript
+
+```
+// types/global.d.ts
+interface Window {
+  myGlobalLib: {
+    version: string;
+    doSomething(): void;
+  };
+}
+```
+
+
+
+**方式三：通过 `npm` 发布类型包**（如 DefinitelyTyped）
+
+如果类型定义对其他项目也有用，可以贡献到 DefinitelyTyped 或单独发布 `@types/xxx` 包。
+
+**项目实例**：
+
+在“铅蛋回收”项目中，我们使用了某个小程序插件，它没有类型定义。我们在 `types` 文件夹下创建了 `plugin.d.ts`：
+
+typescript
+
+```
+declare module 'mini-program-plugin' {
+  export function init(options: { appId: string }): void;
+  export function getUserInfo(): Promise<{
+    nickName: string;
+    avatarUrl: string;
+  }>;
+}
+```
+
+
+
+然后在使用的地方直接导入，就能获得类型提示。
+
+**注意**：编写声明文件时，应尽量准确描述库的 API，可以使用 TypeScript 的泛型、重载等特性。
+
+------
+
+## 8. TypeScript 中的工具类型（Partial、Required、Pick、Omit 等）用过哪些？举例说明。
+
+**工具类型**是 TypeScript 内置的泛型类型，用于对已有类型进行转换。常用工具类型及用法：
+
+1. **Partial<T>**：将 T 的所有属性变为可选。
+
+   typescript
+
+   ```
+   interface User { id: number; name: string; age: number; }
+   type PartialUser = Partial<User>; // { id?: number; name?: string; age?: number; }
+   // 应用：更新用户信息时，只需要传入部分字段
+   function updateUser(id: number, data: Partial<User>) { ... }
+   ```
+
+   
+
+2. **Required<T>**：将 T 的所有属性变为必选。
+
+   typescript
+
+   ```
+   type RequiredUser = Required<PartialUser>>; // 恢复为全必选
+   ```
+
+   
+
+3. **Readonly<T>**：将 T 的所有属性变为只读。
+
+   typescript
+
+   ```
+   type ReadonlyUser = Readonly<User>;
+   // 应用：配置对象不可修改
+   ```
+
+   
+
+4. **Pick<T, K>**：从 T 中选取一组属性 K 组成新类型。
+
+   typescript
+
+   ```
+   type UserBasicInfo = Pick<User, 'id' | 'name'>; // { id: number; name: string; }
+   ```
+
+   
+
+5. **Omit<T, K>**：从 T 中排除属性 K 得到新类型。
+
+   typescript
+
+   ```
+   type UserWithoutId = Omit<User, 'id'>; // { name: string; age: number; }
+   ```
+
+   
+
+6. **Record<K, T>**：构造一个对象类型，键为 K，值为 T。
+
+   typescript
+
+   ```
+   type Role = 'admin' | 'user' | 'guest';
+   type RolePermissions = Record<Role, string[]>; 
+   // { admin: string[]; user: string[]; guest: string[]; }
+   ```
+
+   
+
+7. **Exclude<T, U>**：从联合类型 T 中排除可分配给 U 的类型。
+
+   typescript
+
+   ```
+   type T = 'a' | 'b' | 'c';
+   type Excluded = Exclude<T, 'a' | 'b'>; // 'c'
+   ```
+
+   
+
+8. **Extract<T, U>**：提取联合类型 T 中可分配给 U 的类型。
+
+   typescript
+
+   ```
+   type Extracted = Extract<T, 'a' | 'b'>; // 'a' | 'b'
+   ```
+
+   
+
+9. **NonNullable<T>**：从 T 中排除 null 和 undefined。
+
+   typescript
+
+   ```
+   type T = string | null | undefined;
+   type NonNull = NonNullable<T>; // string
+   ```
+
+   
+
+10. **ReturnType<T>**：获取函数类型 T 的返回值类型。
+
+    typescript
+
+    ```
+    function fetchUser() { return { id: 1, name: 'Tom' }; }
+    type FetchUserReturn = ReturnType<typeof fetchUser>; // { id: number; name: string; }
+    ```
+
+    
+
+11. **Parameters<T>**：获取函数类型 T 的参数类型元组。
+
+    typescript
+
+    ```
+    type FetchUserParams = Parameters<typeof fetchUser>; // []
+    ```
+
+    
+
+12. **Awaited<T>**（TS 4.5+）：获取 Promise 的 resolved 类型。
+
+    typescript
+
+    ```
+    type Result = Awaited<Promise<string>>; // string
+    ```
+
+    
+
+**项目中的应用**：
+
+- **Partial**：在表单提交时，创建用户接口可能只需要部分字段（如编辑时）。我们在更新接口中大量使用 `Partial<T>`。
+
+- **Pick/Omit**：在组件 Props 中，经常从全局类型中挑选需要的字段，或者排除不需要的字段，避免传递多余 props。
+
+- **Record**：用于定义枚举映射对象，如状态对应的文本。
+
+  typescript
+
+  ```
+  const orderStatusMap: Record<OrderStatus, string> = {
+    pending: '待支付',
+    paid: '已支付',
+    cancelled: '已取消'
+  };
+  ```
+
+  
+
+- **ReturnType**：在封装异步请求时，常常需要推断返回数据类型，使用 `ReturnType<typeof fetchSomething>`。
+
+- **Awaited**：处理异步函数的返回值。
+
+------
+
+## 9. 如何利用 TypeScript 实现前端权限校验的类型安全？
+
+在前端权限校验中，TypeScript 可以通过类型系统帮助我们在编译阶段检查权限相关的代码，避免运行时错误。
+
+**设计思路**：
+
+1. **定义权限枚举/联合类型**：
+
+   typescript
+
+   ```
+   export type Permission = 
+     | 'user:view'
+     | 'user:create'
+     | 'user:edit'
+     | 'user:delete'
+     | 'order:view'
+     | 'order:approve';
+   ```
+
+   
+
+2. **在用户状态中存储权限列表**：使用 `Set<Permission>` 或数组。
+
+   typescript
+
+   ```
+   interface User {
+     id: string;
+     name: string;
+     permissions: Permission[];
+   }
+   
+   // Pinia store
+   const userPermissions = ref<Set<Permission>>(new Set());
+   ```
+
+   
+
+3. **封装权限检查函数**：
+
+   typescript
+
+   ```
+   function hasPermission(permission: Permission): boolean {
+     return userPermissions.value.has(permission);
+   }
+   
+   function hasAnyPermission(permissions: Permission[]): boolean {
+     return permissions.some(p => userPermissions.value.has(p));
+   }
+   
+   function hasAllPermissions(permissions: Permission[]): boolean {
+     return permissions.every(p => userPermissions.value.has(p));
+   }
+   ```
+
+   
+
+4. **结合 Vue 的自定义指令**：创建 `v-permission` 指令，在模板中控制元素显示。
+
+   typescript
+
+   ```
+   // permission.ts
+   import { hasPermission } from '@/stores/user';
+   
+   export const vPermission = {
+     mounted(el: HTMLElement, binding: DirectiveBinding<Permission | Permission[]>) {
+       const value = binding.value;
+       let has = false;
+       if (Array.isArray(value)) {
+         has = value.some(p => hasPermission(p));
+       } else {
+         has = hasPermission(value);
+       }
+       if (!has) {
+         el.parentNode?.removeChild(el); // 或设置 display: none
+       }
+     }
+   };
+   ```
+
+   
+
+   在模板中使用：
+
+   html
+
+   ```
+   <button v-permission="'user:create'">新增用户</button>
+   <button v-permission="['user:edit', 'user:delete']">编辑/删除</button>
+   ```
+
+   
+
+5. **路由权限控制**：在路由守卫中根据权限动态过滤路由。
+
+   typescript
+
+   ```
+   // 定义路由时标记需要的权限
+   const routes = [
+     {
+       path: '/admin',
+       component: AdminLayout,
+       meta: { permissions: ['admin:access'] },
+       children: [ ... ]
+     }
+   ];
+   
+   // 路由守卫
+   router.beforeEach((to, from, next) => {
+     const requiredPermissions = to.meta.permissions as Permission[] | undefined;
+     if (requiredPermissions && !hasAllPermissions(requiredPermissions)) {
+       next('/403'); // 无权限跳转
+     } else {
+       next();
+     }
+   });
+   ```
+
+   
+
+6. **类型安全增强**：利用 TypeScript 的模板字面量类型和递归类型，可以定义更严格的权限结构。
+
+   typescript
+
+   ```
+   type Resource = 'user' | 'order' | 'product';
+   type Action = 'view' | 'create' | 'edit' | 'delete';
+   type Permission = `${Resource}:${Action}`; // 生成联合类型
+   ```
+
+   
+
+**项目实例**：
+
+在“铅蛋回收 SaaS 后台”中，我们使用上述方案实现了完整的权限管控。权限数据在登录后从接口获取，存入 Pinia store。按钮级权限使用自定义指令，路由级权限使用路由守卫，所有权限字符串都定义为枚举，确保了权限字符串的拼写正确性，避免了魔法字符串错误。
+
+------
+
+## 10. 你在项目中如何结合 ESLint 和 TypeScript 进行代码质量管控？
+
+**ESLint + TypeScript 集成**：使用 `@typescript-eslint/parser` 代替默认解析器，让 ESLint 能够理解 TypeScript 语法，并使用 `@typescript-eslint/eslint-plugin` 提供的 TypeScript 相关规则。
+
+**配置步骤**：
+
+1. **安装依赖**：
+
+   bash
+
+   ```
+   npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+   ```
+
+   
+
+2. **创建 `.eslintrc.js` 配置文件**：
+
+   javascript
+
+   ```
+   module.exports = {
+     root: true,
+     env: {
+       browser: true,
+       es2021: true,
+       node: true
+     },
+     extends: [
+       'eslint:recommended',
+       'plugin:@typescript-eslint/recommended', // TypeScript 推荐规则
+       'plugin:vue/vue3-recommended', // Vue 3 推荐规则
+       '@vue/typescript/recommended' // Vue + TypeScript 推荐
+     ],
+     parserOptions: {
+       ecmaVersion: 2021,
+       parser: '@typescript-eslint/parser',
+       sourceType: 'module',
+       extraFileExtensions: ['.vue']
+     },
+     plugins: ['@typescript-eslint'],
+     rules: {
+       // 自定义规则
+       '@typescript-eslint/no-explicit-any': 'warn', // 禁止使用 any，警告
+       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }], // 禁止未使用变量
+       '@typescript-eslint/explicit-module-boundary-types': 'off', // 不强制导出函数返回类型
+       'vue/multi-word-component-names': 'off' // 关闭 Vue 组件名多词要求
+     },
+     globals: {
+       defineProps: 'readonly',
+       defineEmits: 'readonly',
+       defineExpose: 'readonly',
+       withDefaults: 'readonly'
+     }
+   };
+   ```
+
+   
+
+3. **配置 `.eslintignore`**：忽略不需要检查的文件，如 `node_modules`、`dist`、`*.d.ts` 等。
+
+4. **在 `package.json` 中添加脚本**：
+
+   json
+
+   ```
+   {
+     "scripts": {
+       "lint": "eslint --ext .js,.ts,.vue src",
+       "lint:fix": "eslint --ext .js,.ts,.vue src --fix"
+     }
+   }
+   ```
+
+   
+
+5. **与 Prettier 集成**：避免 ESLint 和 Prettier 冲突，安装 `eslint-config-prettier` 和 `eslint-plugin-prettier`，在 extends 中最后加入 `'plugin:prettier/recommended'`。
+
+**项目中的实践**：
+
+- **提交前自动检查**：配置 `lint-staged` 配合 `husky`，在 Git 提交前对暂存文件运行 ESLint 和 Prettier，确保代码风格统一。
+- **CI 流水线检查**：在 CI 中运行 `npm run lint`，防止不符合规范的代码合并到主分支。
+- **编辑器集成**：团队统一使用 VSCode，配置 workspace 设置，保存时自动修复 ESLint 问题。
+
+**规则定制**：
+
+- 开启 `@typescript-eslint/no-explicit-any` 为警告，提示开发者尽量避免 any，但在某些无法避免的场景（如复杂第三方库）允许使用。
+- 开启 `@typescript-eslint/no-non-null-assertion` 警告，鼓励使用可选链或类型守卫替代 `!`。
+- 对于 Vue 文件，使用 `vue/v-slot-style` 强制插槽写法一致。
+
+**效果**：通过 ESLint + TypeScript，我们确保了代码风格一致，减少了低级错误（如未使用变量、隐式 any），提高了代码可维护性。新成员能快速遵循团队规范。
+
+
+
+
+
+# 四、Vue 核心详细解答
 
 ------
 
@@ -3300,7 +4271,7 @@ console.log(route.params.id, route.query.page);
 
 **项目实践**：在“千源百荟官网”中，我们采用了**重写 push 方法**的方式，统一在路由配置文件中处理，避免了在每个调用处写 catch 的冗余代码。同时，在菜单组件中，我们添加了激活状态判断，避免用户重复点击当前激活的菜单项，从源头减少重复导航。
 
-# 四、Vue Router 详细解答
+# 五、Vue Router 详细解答
 
 ------
 
@@ -3796,7 +4767,7 @@ console.log(route.params.id, route.query.page);
 
 **项目实践**：在“千源百荟官网”中，我们采用了**重写 push 方法**的方式，统一在路由配置文件中处理，避免了在每个调用处写 catch 的冗余代码。同时，在菜单组件中，我们添加了激活状态判断，避免用户重复点击当前激活的菜单项，从源头减少重复导航。
 
-# 五、状态管理（Vuex/Pinia）详细解答
+# 六、状态管理（Vuex/Pinia）详细解答
 
 ------
 
@@ -4345,7 +5316,7 @@ if (process.env.NODE_ENV === 'development') {
 - 利用 `store.$onAction` 监听 action 调用（可全局监听或针对单个 store）。
 - 结合断点调试，在 action 中添加 `debugger` 语句。
 
-# 六、跨端与小程序开发 - 微信/支付宝小程序 详细解答
+# 七、跨端与小程序开发 - 微信/支付宝小程序 详细解答
 
 ------
 
@@ -5132,7 +6103,7 @@ socketTask.onClose(() => {
 - 准备多套测试账号（不同角色），在提交时注明。
 - 灰度发布：先发布给少量用户，观察反馈，再全量发布。
 
-# 七、工程化与构建 - Webpack/Vite 详细解答
+# 八、工程化与构建 - Webpack/Vite 详细解答
 
 ------
 
@@ -6030,7 +7001,7 @@ src/
 
 这样搭建的项目结构清晰，可维护性强，团队协作顺畅。
 
-# 八、工程化与构建 - 组件库与二次封装 详细解答
+# 九、工程化与构建 - 组件库与二次封装 详细解答
 
 ------
 
@@ -6518,7 +7489,7 @@ css
 
 **项目实践**：在“铅蛋回收”小程序中，我们基于 uView 进行二次封装，uView 本身使用 `u-` 前缀，我们在此基础上再添加业务前缀，并通过 `uni.scss` 中的变量覆盖 uView 的主题，实现了样式统一且无冲突。
 
-# 九、工程化与构建 - Git 与协作 详细解答
+# 十、工程化与构建 - Git 与协作 详细解答
 
 ------
 
@@ -6901,7 +7872,7 @@ git commit -m "merge: 解决 UserList 组件冲突"
 git push origin feature/user-list
 ```
 
-# 十、性能优化 详细解答
+# 十一、性能优化 详细解答
 
 ------
 
@@ -7501,7 +8472,7 @@ vue
 
 ## 
 
-# 十一、项目问题
+# 十二、项目问题
 
 ## 项目一：千源百荟再生资源回收全链路前端体系（官网+ToC小程序）详细解答
 
@@ -8356,7 +9327,7 @@ async function getLocation() {
 
 **项目实践**：在“铅蛋回收”小程序中，通过 Sentry 我们及时发现了一个因后端接口字段变更导致的前端解析错误，在用户大规模受影响前就修复了。性能监控帮助我们发现了某些页面加载过慢，进而优化。
 
-# 十二、工作经历与团队协作 详细解答
+# 十三、工作经历与团队协作 详细解答
 
 ------
 
@@ -8540,7 +9511,7 @@ async function getLocation() {
 
 **实际案例**：在“千源百荟”项目中，我提议使用 Vite 替代 Vue CLI（Webpack）。我准备了对比数据，搭建了一个 Demo 项目，在团队内演示启动速度和热更新效果。大家都认可 Vite 的优势，但担心插件兼容性。我们选择在一个新模块中试点，成功后再推广到整个项目。
 
-# 十三、行为面试与软技能 详细解答
+# 十四、行为面试与软技能 详细解答
 
 ------
 
@@ -8700,7 +9671,7 @@ async function getLocation() {
 
 **效果**：这些照片被用于公司内刊和官网团建报道，增强了团队凝聚力。我也因此被同事称为“御用摄影师”，后续活动经常邀请我参与拍摄。
 
-# 十四、开放性问题与场景设计 详细解答
+# 十五、开放性问题与场景设计 详细解答
 
 ------
 
@@ -9092,17 +10063,7 @@ class Monitor {
 - **团队士气风险**：重构可能带来短期工作量增加，合理安排任务，及时肯定成果。
 - **技术风险**：新技术的未知问题，提前充分调研和原型验证。
 
-**项目实践**：在“铅蛋回收 SaaS 后台”中，我们曾将 Vue 2 + Webpack 项目渐进式重构为 Vue 3 + Vite。我们先用一个月搭建新架构，然后将非核心模块（如用户设置）迁移测试，稳定后再迁移核心模块（订单管理）。整个过程持续 3 个月，新旧系统并行运行 2 周，最终平滑切换。
-
-
-
-
-
-
-
-
-
-
+**项目实践**：在“铅蛋回收 SaaS 后台”中，我们曾将 Vue 2 + Webpack 项目渐进式重构为 Vue 3 + Vite。我们先用一个月搭建新架构，然后将非核心模块（如用户设置）迁移测试，稳定后再迁移核心模块（订单管理）。整个过程持续 3 个月，新旧系统并行运行 2 周，最终平滑切换
 
 
 
