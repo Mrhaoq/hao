@@ -6,7 +6,7 @@
 > 约定：每题「结论 + 关联路径」；不确定处标明「未从代码确认」
 >
 > **源文件：** `D:/A-work/yz/nurse-mini/docs/项目认识-答案.md`  
-> **系列索引：** [项目认识 · 索引](./项目认识%20·%20索引.md)  
+> **系列索引：** [项目认识 · 索引](./项目认识%20·%20索引.md) · [公司业务流程](./公司业务流程.md)  
 > **姊妹文档：** [yishou-mobile](./项目认识%20·%20答案（yishou-mobile）.md) · [crm](./项目认识%20·%20答案（crm）.md) · [organization-background](./项目认识%20·%20答案（organization-background）.md)
 
 ---
