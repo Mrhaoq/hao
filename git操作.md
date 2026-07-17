@@ -1,7 +1,8 @@
 # Git 常用操作指南
 
-> 本文档整理日常开发中最常用的 Git 操作，结合本项目实际场景（分支对比、提交管理、撤回、转移改动等），便于自查与快速上手。
+> 本文档整理日常开发中最常用的 Git 操作，结合本项目实际场景（分支对比、提交管理、撤回、转移改动、快捷命令 alias 等），便于自查与快速上手。
 > 示例命令在 PowerShell 下使用 `;` 分隔多条命令（不要用 `&&`）。
+> 建议优先阅读：**十一、工作流速查**、**十三、快捷命令**、**附：日常速查卡**。
 
 ---
 
@@ -351,6 +352,168 @@ git reset --hard <hash>                 # 恢复
 
 ---
 
+## 十三、快捷命令（alias）
+
+一次性配置后，可用短命令替代长命令。写入全局配置：
+
+```bash
+# --- 状态与日志 ---
+git config --global alias.st "status -sb"                    # git st
+git config --global alias.co "checkout"                      # git co <branch>
+git config --global alias.br "branch"                        # git br
+git config --global alias.ci "commit"                        # git ci -m "msg"
+git config --global alias.cm "commit -m"                     # git cm "feat: xxx"
+git config --global alias.cam "commit -am"                   # git cam "feat: xxx"
+git config --global alias.last "log -1 --stat"                # git last
+git config --global alias.lg "log --oneline --graph --decorate -20"  # git lg
+git config --global alias.ll "log --oneline -10"              # git ll
+
+# --- 暂存与撤回 ---
+git config --global alias.unstage "restore --staged"         # git unstage <file>
+git config --global alias.undo "reset --soft HEAD~1"          # git undo（撤回提交，改动留暂存区）
+git config --global alias.discard "restore ."                 # git discard（放弃工作区全部改动，慎用）
+
+# --- 拉取与对比 ---
+git config --global alias.f "fetch origin"                   # git f
+git config --global alias.pullr "pull --rebase"               # git pullr
+git config --global alias.ms "merge-base HEAD origin/main"    # git ms（找与 main 的共同祖先）
+git config --global alias.dm "diff --stat origin/main...HEAD" # git dm（相对 main 改了哪些文件）
+git config --global alias.lm "log --oneline origin/main..HEAD" # git lm（领先 main 的提交）
+
+# --- stash ---
+git config --global alias.save "stash push -u -m"            # git save "半成品说明"
+git config --global alias.pop "stash pop"                    # git pop
+```
+
+### 配置后用法示例
+```bash
+git st                    # 简洁状态（分支名 + 改动文件）
+git lg                    # 图形化最近 20 条提交
+git cm "feat: 新增登录页"
+git undo                  # 撤回最近一次提交，改动仍在暂存区
+git f ; git dm            # 先 fetch，再看相对 main 的文件差异
+git lm                    # 我领先 main 几个提交
+git save "未完成的搜索功能" ; git co main ; git pop
+```
+
+### 查看 / 删除已配置的 alias
+```bash
+git config --global --get-regexp alias   # 列出全部 alias
+git config --global --unset alias.st     # 删除某个 alias
+```
+
+> **提示**：alias 只是本地配置，不会进仓库。团队成员需各自执行上述 `git config` 命令。
+
+---
+
+## 十四、补充实用操作
+
+### 1. 远程仓库管理
+```bash
+git remote -v                          # 查看远程地址
+git remote add origin <url>            # 添加远程
+git remote set-url origin <新url>      # 修改远程地址
+git remote rename origin upstream      # 重命名远程
+git remote remove origin               # 删除远程
+git branch -vv                         # 查看本地分支与远程跟踪关系
+git branch -u origin/main              # 为当前分支设置上游跟踪
+```
+
+### 2. 冲突处理完整流程
+```bash
+git merge feature/x        # 或 rebase / cherry-pick / pull 时发生冲突
+git status                 # 看哪些文件有冲突（Unmerged paths）
+# 手动编辑冲突文件，去掉 <<<<<<< ======= >>>>>>> 标记
+git add <file>             # 标记该文件冲突已解决
+git merge --continue       # merge 场景；rebase 用 git rebase --continue
+# 若想放弃本次合并：
+git merge --abort          # 或 git rebase --abort / git cherry-pick --abort
+```
+
+冲突标记示例：
+```text
+<<<<<<< HEAD
+当前分支的内容
+=======
+对方分支的内容
+>>>>>>> feature/x
+```
+
+### 3. 清理未跟踪文件
+```bash
+git clean -n               # 预览将删除哪些未跟踪文件（安全，先看）
+git clean -fd              # 删除未跟踪文件和目录
+git clean -fdx             # 连被 ignore 的文件也删（如 node_modules，慎用）
+```
+
+### 4. 搜索提交历史
+```bash
+git log --author="张三" --oneline           # 按作者过滤
+git log --since="2026-01-01" --until="2026-07-01" --oneline  # 按时间
+git log --grep="登录" --oneline             # 按提交信息关键字
+git log -S "关键字" --oneline               # 按代码增减内容搜索（pickaxe）
+git log -G "正则" --oneline                 # 按 diff 正则搜索
+git log --follow -- <file>                  # 跟踪文件重命名后的历史
+```
+
+### 5. 交互式整理提交（squash）
+```bash
+# 把最近 3 个提交压成 1 个（未 push 时用）
+git rebase -i HEAD~3
+# 编辑器中：第一个留 pick，其余改成 squash（或 s），保存退出后合并提交信息
+```
+
+### 6. 只拉取不合并时对比远程
+```bash
+git fetch origin
+git log --oneline HEAD..origin/main     # 远程 main 有哪些我还没有的提交
+git log --oneline origin/main..HEAD     # 我本地有哪些远程还没有的提交
+```
+
+### 7. 常用一键组合（PowerShell 用 `;`）
+```bash
+# 快速提交并推送
+git add . ; git commit -m "feat: xxx" ; git push
+
+# 同步最新 main 再对比自己的改动
+git fetch origin main ; git dm ; git lm
+
+# 切到 main 并拉最新
+git switch main ; git pull --rebase
+
+# 新建功能分支并推送
+git switch -c feat/xxx origin/main ; git push -u origin HEAD
+```
+
+### 8. 查看配置与帮助
+```bash
+git config --list --show-origin         # 查看所有配置及来源文件
+git config user.name                    # 查看当前用户名
+git config --global user.name "你的名字"
+git config --global user.email "you@example.com"
+git help <command>                      # 打开某命令手册，如 git help rebase
+git <command> -h                        # 简短帮助
+```
+
+---
+
+## 附：日常速查卡
+
+| 想做什么 | 命令 |
+|---|---|
+| 我现在在哪、改了啥 | `git status` / `git st` |
+| 相对 main 改了哪些文件 | `git fetch origin main` → `git dm` |
+| 领先 main 几个提交 | `git lm` |
+| 暂存并提交 | `git add .` → `git cm "feat: xxx"` |
+| 撤回刚提交（未 push） | `git undo` |
+| 放弃某文件工作区改动 | `git restore <file>` |
+| 临时切分支 | `git save "说明"` → 切分支 → `git pop` |
+| 已 push 要撤销 | `git revert <commit>` |
+| 合入前安全检查 | `git f` → `git dm` → `git lm` |
+| 新建功能分支 | `git switch -c feat/xxx origin/main` |
+
+---
+
 ## 附：常见问题
 
 **Q：`git diff A...B` 和 `A..B` 有什么区别？**
@@ -371,3 +534,5 @@ git blame <file>                 # 逐行显示最后修改人和提交
 git log -p <file>                # 查看某文件的完整改动历史
 git log -S "关键字" --oneline    # 查找引入/删除某关键字的提交
 ```
+
+---
