@@ -3,33 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>无畏契约灵敏度</title>
+  <title>无畏契约灵敏度工坊</title>
   <link rel="stylesheet" href="../css/shell.css" />
   <link rel="stylesheet" href="css/valorant-sens.css" />
 </head>
 <body>
   <main class="vs-main">
     <header class="vs-hero">
-      <h1>无畏契约灵敏度</h1>
-      <p>跨游戏腰射换算、PSA 七轮找手感、按 cm/360 微调。系数来自社区，请以训练场实测为准。</p>
+      <h1>无畏契约灵敏度工坊</h1>
+      <p>网页打靶测手感，生成可直接填进游戏的腰射灵敏度。准星碰到靶即命中，无需点击。</p>
     </header>
 
     <nav class="vs-tabs" role="tablist">
-      <button type="button" class="vs-tab is-active" role="tab" aria-selected="true" data-tab="convert">跨游戏换算</button>
-      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="psa">PSA 优化</button>
-      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="tune">微调</button>
+      <button type="button" class="vs-tab is-active" role="tab" aria-selected="true" data-tab="wizard">生成向导</button>
+      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="play">测试画布</button>
+      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="result">结果</button>
+      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="toolbox">工具箱</button>
     </nav>
 
-    <section id="tab-convert" class="vs-panel is-active" role="tabpanel">
+    <section id="tab-wizard" class="vs-panel is-active" role="tabpanel">
       <div class="vs-card vs-checklist">
         <h2>使用前检查</h2>
         <ul>
           <li>Windows 指针速度设为 6/11（中间档）</li>
           <li>关闭「提高指针精确度」（鼠标加速）</li>
           <li>无畏契约开启原始输入缓冲</li>
-          <li>鼠标驱动里的 DPI 与下方填写值一致</li>
+          <li>鼠标驱动 DPI 与下方填写值一致</li>
+          <li>请在电脑上测（需要鼠标锁定）</li>
         </ul>
-        <p class="vs-note">当前仅换算腰射。ADS / 狙击开镜需在游戏内单独微调。</p>
+      </div>
+
+      <div class="vs-card">
+        <h2>建档</h2>
+        <div class="vs-form-grid">
+          <label>鼠标 DPI
+            <input id="wz-dpi" type="number" min="50" max="32000" step="50" value="800" />
+          </label>
+          <label>已有灵敏度（可选）
+            <input id="wz-old-sens" type="number" min="0" max="5" step="0.001" placeholder="没有可留空" />
+          </label>
+        </div>
+        <p class="vs-note">习惯标签会决定起始 cm/360，随后仍由打靶结果收敛。</p>
+        <div class="vs-chip-row" id="wz-habits">
+          <button type="button" class="vs-chip" data-habit="flick">甩枪</button>
+          <button type="button" class="vs-chip" data-habit="track">跟枪</button>
+          <button type="button" class="vs-chip" data-habit="wrist">腕控</button>
+          <button type="button" class="vs-chip" data-habit="arm">臂控</button>
+        </div>
+        <dl class="vs-stats">
+          <div><dt>起始灵敏度</dt><dd id="wz-start-sens">—</dd></div>
+          <div><dt>约 cm/360</dt><dd id="wz-start-cm">—</dd></div>
+        </dl>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="wz-start">开始完整流程</button>
+        </div>
+        <p class="vs-note">完整流程：3 轮 Gridshot / 跟枪 / 微调（碰靶）→ 网页 A/B 对比 → 输出通用灵敏度。</p>
+      </div>
+
+      <div class="vs-card">
+        <h2>自由训练</h2>
+        <p class="vs-note">单关练习，不改最终结果。碰到即命中，画面中央为准星。</p>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-secondary" data-free="gridshot">Gridshot</button>
+          <button type="button" class="vs-btn vs-btn-secondary" data-free="tracking">跟枪 Tracking</button>
+          <button type="button" class="vs-btn vs-btn-secondary" data-free="micro">微修正 Micro</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-play" class="vs-panel" role="tabpanel" hidden>
+      <div class="vs-card vs-stage-card">
+        <div class="vs-play-meta">
+          <p class="vs-round-meta" id="play-meta">尚未开始</p>
+          <p class="vs-note" id="play-sens-line">当前灵敏度 —</p>
+        </div>
+        <div class="vs-stage" id="play-stage">
+          <canvas id="aim-canvas" width="960" height="540" tabindex="0"></canvas>
+          <div class="vs-stage-overlay" id="play-overlay">
+            <p class="vs-overlay-title" id="play-overlay-title">点击开始</p>
+            <p class="vs-note" id="play-overlay-sub">锁定鼠标后，准星碰到靶即可得分，不需要点击。</p>
+            <button type="button" class="vs-btn vs-btn-primary" id="play-overlay-btn">锁定鼠标并开始</button>
+          </div>
+        </div>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-secondary" id="play-abort">结束并返回</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-result" class="vs-panel" role="tabpanel" hidden>
+      <div class="vs-card">
+        <h2>填入无畏契约</h2>
+        <p class="vs-result-sens"><span id="rs-sens">—</span></p>
+        <p class="vs-result-label">设置 → 灵敏度：通用（腰射）。内部精度 <span id="rs-sens-full">—</span></p>
+        <dl class="vs-stats">
+          <div><dt>DPI</dt><dd id="rs-dpi">—</dd></div>
+          <div><dt>eDPI</dt><dd id="rs-edpi">—</dd></div>
+          <div><dt>约 cm/360</dt><dd id="rs-cm">—</dd></div>
+          <div><dt>来源</dt><dd id="rs-source">—</dd></div>
+        </dl>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="rs-copy">复制灵敏度</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="rs-to-tune">送到微调</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="rs-retune">再测一轮微调</button>
+        </div>
+        <p class="vs-hint" id="rs-copy-hint" hidden></p>
+        <p class="vs-note">网页 FOV 与游戏不会完全一致，但 yaw=0.07 与 DPI 对齐后，该数字可直接用于通用灵敏度。请再进训练场确认手感。</p>
+      </div>
+
+      <div class="vs-card">
+        <h2>本轮测试摘要</h2>
+        <ol class="vs-history-list" id="rs-rounds"></ol>
+      </div>
+    </section>
+
+    <section id="tab-toolbox" class="vs-panel" role="tabpanel" hidden>
+      <div class="vs-card">
+        <h2>网页 A/B 对比</h2>
+        <p class="vs-note">两个候选各打一轮短 Gridshot，碰到即命中。用得分更高的一侧更新灵敏度。</p>
+        <div class="vs-form-grid">
+          <label>偏低候选
+            <input id="ab-lower" type="number" min="0.05" max="5" step="0.001" value="0.30" />
+          </label>
+          <label>偏高候选
+            <input id="ab-higher" type="number" min="0.05" max="5" step="0.001" value="0.40" />
+          </label>
+          <label>DPI
+            <input id="ab-dpi" type="number" min="50" max="32000" step="50" value="800" />
+          </label>
+        </div>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="ab-start">开始 A/B</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="ab-from-result">从结果导入 ±5%</button>
+        </div>
+        <p class="vs-round-meta" id="ab-status">尚未开始</p>
+      </div>
+
+      <div class="vs-card vs-checklist">
+        <h2>跨游戏换算</h2>
+        <ul>
+          <li>当前仅换算腰射。ADS / 狙击开镜需在游戏内单独微调。</li>
+        </ul>
       </div>
 
       <div class="vs-card">
@@ -81,7 +195,7 @@
         </dl>
         <div class="vs-btn-row">
           <button type="button" class="vs-btn vs-btn-primary" id="cv-copy">复制灵敏度</button>
-          <button type="button" class="vs-btn vs-btn-secondary" id="cv-to-psa">送到 PSA</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="cv-to-wizard">用作测试基准</button>
           <button type="button" class="vs-btn vs-btn-secondary" id="cv-save">保存到历史</button>
         </div>
         <p class="vs-hint" id="cv-copy-hint" hidden></p>
@@ -99,62 +213,7 @@
           </table>
         </div>
       </div>
-    </section>
 
-    <section id="tab-psa" class="vs-panel" role="tabpanel" hidden>
-      <div class="vs-card">
-        <h2>PSA 七轮找手感</h2>
-        <p class="vs-pc-hint">请在电脑游戏训练场实测两个候选值，再回来选手感更好的一侧。手机上只能记录选择。</p>
-        <div class="vs-form-grid">
-          <label>基准灵敏度
-            <input id="psa-base" type="number" min="0.001" max="20" step="0.001" value="0.35" />
-          </label>
-          <label>DPI
-            <input id="psa-dpi" type="number" min="50" max="32000" step="50" value="800" />
-          </label>
-        </div>
-        <div class="vs-btn-row">
-          <button type="button" class="vs-btn vs-btn-primary" id="psa-start">开始 / 重新开始</button>
-          <button type="button" class="vs-btn vs-btn-secondary" id="psa-import">从换算结果导入</button>
-        </div>
-      </div>
-
-      <div class="vs-card" id="psa-round-card">
-        <p class="vs-round-meta" id="psa-round-text">尚未开始</p>
-        <dl class="vs-stats">
-          <div><dt>当前估计</dt><dd id="psa-estimate">—</dd></div>
-          <div><dt>偏低候选</dt><dd id="psa-lower">—</dd></div>
-          <div><dt>偏高候选</dt><dd id="psa-higher">—</dd></div>
-          <div><dt>cm/360（估计）</dt><dd id="psa-cm">—</dd></div>
-        </dl>
-        <p class="vs-note">训练场建议：中距离点射、近距离甩枪、小幅度跟枪，再选更好的一侧。</p>
-        <div class="vs-btn-row">
-          <button type="button" class="vs-btn vs-btn-secondary" id="psa-pick-lower" disabled>偏低更好</button>
-          <button type="button" class="vs-btn vs-btn-secondary" id="psa-pick-higher" disabled>偏高更好</button>
-        </div>
-      </div>
-
-      <div class="vs-card" id="psa-done-card" hidden>
-        <h2>最终灵敏度</h2>
-        <p class="vs-result-sens"><span id="psa-final-sens">—</span></p>
-        <dl class="vs-stats">
-          <div><dt>DPI</dt><dd id="psa-final-dpi">—</dd></div>
-          <div><dt>eDPI</dt><dd id="psa-final-edpi">—</dd></div>
-          <div><dt>cm/360</dt><dd id="psa-final-cm">—</dd></div>
-        </dl>
-        <div class="vs-btn-row">
-          <button type="button" class="vs-btn vs-btn-primary" id="psa-copy">复制灵敏度</button>
-          <button type="button" class="vs-btn vs-btn-secondary" id="psa-to-tune">送到微调</button>
-        </div>
-      </div>
-
-      <div class="vs-card">
-        <h2>本轮选择记录</h2>
-        <ol class="vs-history-list" id="psa-choices"></ol>
-      </div>
-    </section>
-
-    <section id="tab-tune" class="vs-panel" role="tabpanel" hidden>
       <div class="vs-card">
         <h2>在结果附近微调（±10%）</h2>
         <label>中心灵敏度
@@ -207,7 +266,7 @@
     </section>
 
     <footer class="vs-disclaimer">
-      <p>非官方工具。游戏 yaw 系数来自社区实测（核对日期见页面），大版本更新后可能变化。换算只保证腰射 cm/360 接近，不保证开镜与手感完全一致。请以训练场实测为准。</p>
+      <p>非官方工具。腰射 yaw=0.07（社区实测）。输出对应游戏「灵敏度：通用」。网页测试用于收敛手感，大版本更新后请以训练场为准。</p>
     </footer>
   </main>
 
@@ -216,8 +275,12 @@
   <script src="js/games.js"></script>
   <script src="js/math.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/modes.js"></script>
+  <script src="js/aim-engine.js"></script>
+  <script src="js/wizard.js"></script>
+  <script src="js/ab-compare.js"></script>
   <script src="js/converter.js"></script>
-  <script src="js/psa.js"></script>
   <script src="js/tune.js"></script>
   <script src="js/app.js"></script>
 </body>

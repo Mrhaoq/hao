@@ -8,6 +8,9 @@ const ValSensStorage = (function () {
       lastConvert: null,
       psaSession: null,
       lastTune: null,
+      profile: null,
+      wizardSession: null,
+      finalSens: null,
       history: [],
       savedAt: null
     };

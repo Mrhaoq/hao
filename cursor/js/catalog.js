@@ -18,10 +18,10 @@ const Catalog = (function () {
     },
     {
       id: 'valorant-sens',
-      name: '无畏契约灵敏度',
-      aliases: ['VAL', '瓦罗兰特', '灵敏度', 'PSA', '转换', 'CS2', 'DPI', 'eDPI', 'cm360'],
+      name: '无畏契约灵敏度工坊',
+      aliases: ['VAL', '瓦罗兰特', '灵敏度', 'PSA', 'Aimlabs', '打靶', '工坊', '转换', 'CS2', 'DPI', 'eDPI', 'cm360'],
       tags: ['游戏', 'FPS', '工具', '离线'],
-      summary: '跨游戏灵敏度换算 + PSA 7 轮找手感 + cm/360 微调',
+      summary: '网页 Gridshot / 跟枪 / 微调打靶，生成可填入无畏契约的腰射灵敏度',
       path: '/valorant-sens/',
       status: 'live',
       data: 'local',

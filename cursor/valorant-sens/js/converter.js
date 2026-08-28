@@ -114,7 +114,9 @@ const ValSensConverter = (function () {
     syncYawPlaceholders();
     $('cv-target-dpi').disabled = $('cv-same-dpi').checked;
     const r = currentResult();
-    $('cv-out-sens').textContent = SensMath.formatSens(r.toSens);
+    $('cv-out-sens').textContent = r.targetGame.id === 'valorant'
+      ? SensMath.formatSensGame(r.toSens)
+      : SensMath.formatSens(r.toSens);
     $('cv-out-game').textContent = r.targetGame.name + ' · 腰射';
     $('cv-out-src-edpi').textContent = SensMath.formatEdpi(r.srcEdpi);
     $('cv-out-tgt-edpi').textContent = SensMath.formatEdpi(r.tgtEdpi);
@@ -145,13 +147,16 @@ const ValSensConverter = (function () {
     });
     $('cv-copy').addEventListener('click', function () {
       const r = currentResult();
-      ValSensApp.copyText(SensMath.formatSens(r.toSens), 'cv-copy-hint');
+      const text = r.targetGame.id === 'valorant'
+        ? SensMath.formatSensGame(r.toSens)
+        : SensMath.formatSens(r.toSens);
+      ValSensApp.copyText(text, 'cv-copy-hint');
     });
-    $('cv-to-psa').addEventListener('click', function () {
+    $('cv-to-wizard').addEventListener('click', function () {
       const hip = ValSensApp.getHipfire();
       if (!hip || hip.sens == null) return;
-      ValSensPsa.importBase(hip.sens, hip.dpi);
-      ValSensApp.showTab('psa');
+      ValSensWizard.importProfile(hip.sens, hip.dpi);
+      ValSensApp.showTab('wizard');
     });
     $('cv-save').addEventListener('click', function () {
       const r = currentResult();

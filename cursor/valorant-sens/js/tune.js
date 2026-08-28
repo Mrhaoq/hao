@@ -70,7 +70,7 @@ const ValSensTune = (function () {
       $(id).addEventListener('input', renderFromCm);
     });
     $('tune-copy').addEventListener('click', function () {
-      ValSensApp.copyText(SensMath.formatSens(currentSens()));
+      ValSensApp.copyText(SensMath.formatSensGame(currentSens()));
     });
     $('tune-save').addEventListener('click', function () {
       const dpi = Number($('tune-dpi').value);
@@ -89,7 +89,7 @@ const ValSensTune = (function () {
     });
     $('tune-copy-cm').addEventListener('click', function () {
       const r = renderFromCm();
-      ValSensApp.copyText(SensMath.formatSens(r.sens));
+      ValSensApp.copyText(SensMath.formatSensGame(r.sens));
     });
     renderSlider();
     renderFromCm();

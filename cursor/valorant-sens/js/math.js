@@ -56,6 +56,11 @@ const SensMath = (function () {
     return value.toFixed(6);
   }
 
+  function formatSensGame(value) {
+    if (value == null || !isFinite(value)) return '—';
+    return Number(value).toFixed(3);
+  }
+
   function formatCm(value) {
     if (value == null || !isFinite(value)) return '—';
     return value.toFixed(2) + ' cm';
@@ -74,6 +79,7 @@ const SensMath = (function () {
     sensFromCm360: sensFromCm360,
     dpiTable: dpiTable,
     formatSens: formatSens,
+    formatSensGame: formatSensGame,
     formatCm: formatCm,
     formatEdpi: formatEdpi
   };
