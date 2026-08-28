@@ -1,9 +1,10 @@
 const Storage = (function () {
-  const KEY = 'personality_test_v1';
+  const KEY = 'hao.personality.v1';
+  const LEGACY_KEY = 'personality_test_v1';
 
   function load() {
     try {
-      const raw = localStorage.getItem(KEY);
+      const raw = localStorage.getItem(KEY) || localStorage.getItem(LEGACY_KEY);
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
@@ -16,6 +17,7 @@ const Storage = (function () {
 
   function clear() {
     localStorage.removeItem(KEY);
+    localStorage.removeItem(LEGACY_KEY);
   }
 
   function saveProgress(answers, mode, currentIndex, view) {

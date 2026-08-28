@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>无畏契约灵敏度</title>
+  <link rel="stylesheet" href="../css/shell.css" />
+  <link rel="stylesheet" href="css/valorant-sens.css" />
+</head>
+<body>
+  <main class="vs-main">
+    <header class="vs-hero">
+      <h1>无畏契约灵敏度</h1>
+      <p>跨游戏腰射换算、PSA 七轮找手感、按 cm/360 微调。系数来自社区，请以训练场实测为准。</p>
+    </header>
+
+    <nav class="vs-tabs" role="tablist">
+      <button type="button" class="vs-tab is-active" role="tab" aria-selected="true" data-tab="convert">跨游戏换算</button>
+      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="psa">PSA 优化</button>
+      <button type="button" class="vs-tab" role="tab" aria-selected="false" data-tab="tune">微调</button>
+    </nav>
+
+    <section id="tab-convert" class="vs-panel is-active" role="tabpanel">
+      <div class="vs-card vs-checklist">
+        <h2>使用前检查</h2>
+        <ul>
+          <li>Windows 指针速度设为 6/11（中间档）</li>
+          <li>关闭「提高指针精确度」（鼠标加速）</li>
+          <li>无畏契约开启原始输入缓冲</li>
+          <li>鼠标驱动里的 DPI 与下方填写值一致</li>
+        </ul>
+        <p class="vs-note">当前仅换算腰射。ADS / 狙击开镜需在游戏内单独微调。</p>
+      </div>
+
+      <div class="vs-card">
+        <h2>输入</h2>
+        <div class="vs-form-grid">
+          <label>源游戏
+            <select id="cv-source-game"></select>
+          </label>
+          <label>源 DPI
+            <input id="cv-source-dpi" type="number" min="50" max="32000" step="50" value="800" />
+          </label>
+          <label>源灵敏度
+            <input id="cv-source-sens" type="number" min="0.001" max="50" step="0.001" value="1" />
+          </label>
+          <label>目标游戏
+            <select id="cv-target-game"></select>
+          </label>
+          <label>目标 DPI
+            <input id="cv-target-dpi" type="number" min="50" max="32000" step="50" value="800" />
+          </label>
+        </div>
+        <label class="vs-check">
+          <input id="cv-same-dpi" type="checkbox" checked />
+          目标 DPI 与源 DPI 相同
+        </label>
+        <details class="vs-advanced">
+          <summary>高级：手动覆盖 yaw</summary>
+          <p class="vs-note" id="cv-yaw-hint"></p>
+          <div class="vs-form-grid">
+            <label>源 yaw
+              <input id="cv-source-yaw" type="number" min="0.0001" max="1" step="0.0001" />
+            </label>
+            <label>目标 yaw
+              <input id="cv-target-yaw" type="number" min="0.0001" max="1" step="0.0001" />
+            </label>
+          </div>
+        </details>
+      </div>
+
+      <div class="vs-card">
+        <h2>换算结果（腰射）</h2>
+        <p class="vs-result-sens"><span id="cv-out-sens">—</span></p>
+        <p class="vs-result-label" id="cv-out-game"></p>
+        <dl class="vs-stats">
+          <div><dt>源 eDPI</dt><dd id="cv-out-src-edpi">—</dd></div>
+          <div><dt>目标 eDPI</dt><dd id="cv-out-tgt-edpi">—</dd></div>
+          <div><dt>源 cm/360</dt><dd id="cv-out-src-cm">—</dd></div>
+          <div><dt>目标 cm/360</dt><dd id="cv-out-tgt-cm">—</dd></div>
+        </dl>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="cv-copy">复制灵敏度</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="cv-to-psa">送到 PSA</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="cv-save">保存到历史</button>
+        </div>
+        <p class="vs-hint" id="cv-copy-hint" hidden></p>
+      </div>
+
+      <div class="vs-card">
+        <h2>同 cm/360 的 DPI 等效表</h2>
+        <p class="vs-note">保持目标游戏转身距离不变，换 DPI 时用对应灵敏度。</p>
+        <div class="vs-table-wrap">
+          <table class="vs-table">
+            <thead>
+              <tr><th>DPI</th><th>灵敏度</th><th>eDPI</th></tr>
+            </thead>
+            <tbody id="cv-dpi-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-psa" class="vs-panel" role="tabpanel" hidden>
+      <div class="vs-card">
+        <h2>PSA 七轮找手感</h2>
+        <p class="vs-pc-hint">请在电脑游戏训练场实测两个候选值，再回来选手感更好的一侧。手机上只能记录选择。</p>
+        <div class="vs-form-grid">
+          <label>基准灵敏度
+            <input id="psa-base" type="number" min="0.001" max="20" step="0.001" value="0.35" />
+          </label>
+          <label>DPI
+            <input id="psa-dpi" type="number" min="50" max="32000" step="50" value="800" />
+          </label>
+        </div>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="psa-start">开始 / 重新开始</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="psa-import">从换算结果导入</button>
+        </div>
+      </div>
+
+      <div class="vs-card" id="psa-round-card">
+        <p class="vs-round-meta" id="psa-round-text">尚未开始</p>
+        <dl class="vs-stats">
+          <div><dt>当前估计</dt><dd id="psa-estimate">—</dd></div>
+          <div><dt>偏低候选</dt><dd id="psa-lower">—</dd></div>
+          <div><dt>偏高候选</dt><dd id="psa-higher">—</dd></div>
+          <div><dt>cm/360（估计）</dt><dd id="psa-cm">—</dd></div>
+        </dl>
+        <p class="vs-note">训练场建议：中距离点射、近距离甩枪、小幅度跟枪，再选更好的一侧。</p>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-secondary" id="psa-pick-lower" disabled>偏低更好</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="psa-pick-higher" disabled>偏高更好</button>
+        </div>
+      </div>
+
+      <div class="vs-card" id="psa-done-card" hidden>
+        <h2>最终灵敏度</h2>
+        <p class="vs-result-sens"><span id="psa-final-sens">—</span></p>
+        <dl class="vs-stats">
+          <div><dt>DPI</dt><dd id="psa-final-dpi">—</dd></div>
+          <div><dt>eDPI</dt><dd id="psa-final-edpi">—</dd></div>
+          <div><dt>cm/360</dt><dd id="psa-final-cm">—</dd></div>
+        </dl>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="psa-copy">复制灵敏度</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="psa-to-tune">送到微调</button>
+        </div>
+      </div>
+
+      <div class="vs-card">
+        <h2>本轮选择记录</h2>
+        <ol class="vs-history-list" id="psa-choices"></ol>
+      </div>
+    </section>
+
+    <section id="tab-tune" class="vs-panel" role="tabpanel" hidden>
+      <div class="vs-card">
+        <h2>在结果附近微调（±10%）</h2>
+        <label>中心灵敏度
+          <input id="tune-center" type="number" min="0.001" max="20" step="0.001" value="0.35" />
+        </label>
+        <label>DPI
+          <input id="tune-dpi" type="number" min="50" max="32000" step="50" value="800" />
+        </label>
+        <label class="vs-slider-label">微调 <span id="tune-pct">0%</span>
+          <input id="tune-slider" type="range" min="-10" max="10" step="0.5" value="0" />
+        </label>
+        <p class="vs-result-sens"><span id="tune-sens">—</span></p>
+        <dl class="vs-stats">
+          <div><dt>eDPI</dt><dd id="tune-edpi">—</dd></div>
+          <div><dt>cm/360</dt><dd id="tune-cm">—</dd></div>
+        </dl>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-primary" id="tune-copy">复制灵敏度</button>
+          <button type="button" class="vs-btn vs-btn-secondary" id="tune-save">保存到历史</button>
+        </div>
+      </div>
+
+      <div class="vs-card">
+        <h2>按目标 cm/360 反推</h2>
+        <p class="vs-note">多数竞技玩家约在 25–55 cm 转一圈。低敏更稳，高敏转身更快。</p>
+        <div class="vs-form-grid">
+          <label>目标 cm/360
+            <input id="tune-target-cm" type="number" min="5" max="200" step="0.1" value="45" />
+          </label>
+          <label>DPI
+            <input id="tune-target-dpi" type="number" min="50" max="32000" step="50" value="800" />
+          </label>
+        </div>
+        <p class="vs-result-sens vs-result-sens-sm"><span id="tune-from-cm">—</span></p>
+        <div class="vs-btn-row">
+          <button type="button" class="vs-btn vs-btn-secondary" id="tune-use-cm">用作微调中心</button>
+          <button type="button" class="vs-btn vs-btn-primary" id="tune-copy-cm">复制灵敏度</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="vs-card">
+      <h2>本机历史</h2>
+      <p class="vs-note">保存在本浏览器，键名 hao.valorant-sens.v1。换设备请先导出。</p>
+      <div class="vs-btn-row">
+        <button type="button" class="vs-btn vs-btn-secondary" id="hist-export">导出 JSON</button>
+        <label class="vs-btn vs-btn-secondary vs-file-btn">导入 JSON<input id="hist-import" type="file" accept="application/json,.json" hidden /></label>
+      </div>
+      <ul class="vs-history-list" id="hist-list"></ul>
+    </section>
+
+    <footer class="vs-disclaimer">
+      <p>非官方工具。游戏 yaw 系数来自社区实测（核对日期见页面），大版本更新后可能变化。换算只保证腰射 cm/360 接近，不保证开镜与手感完全一致。请以训练场实测为准。</p>
+    </footer>
+  </main>
+
+  <script src="../js/catalog.js"></script>
+  <script src="../js/shell.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/math.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/converter.js"></script>
+  <script src="js/psa.js"></script>
+  <script src="js/tune.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

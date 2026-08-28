@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多维度人格测评</title>
+  <link rel="stylesheet" href="../css/shell.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- 首页 -->
+    <section id="view-home" class="view active">
+      <header class="hero">
+        <h1>多维度人格测评</h1>
+        <p class="subtitle">五档 Likert · 7 大体系 · 约 220 题 · 90–120 分钟</p>
+      </header>
+      <div class="card-grid">
+        <div class="card" id="module-list"></div>
+        <div class="card actions-card">
+          <h2>开始测试</h2>
+          <label class="mode-toggle"><input type="radio" name="mode" value="full" checked /> 完整版（7 模块 · ~220 题）</label>
+          <label class="mode-toggle"><input type="radio" name="mode" value="quick" /> 快速版（16型 + 大五 · ~115 题）</label>
+          <div class="btn-row">
+            <button class="btn primary" id="btn-start">开始测试</button>
+            <button class="btn secondary" id="btn-pdf-book">下载题本 PDF</button>
+          </div>
+          <hr />
+          <h3>本地数据</h3>
+          <div class="btn-row">
+            <button class="btn secondary" id="btn-export">导出 JSON 备份</button>
+            <label class="btn secondary file-btn">导入备份<input type="file" id="btn-import" accept=".json" hidden /></label>
+            <button class="btn ghost" id="btn-clear">清除记录</button>
+          </div>
+          <p id="resume-hint" class="hint hidden"></p>
+        </div>
+      </div>
+      <footer class="disclaimer">
+        <p>本测评为自研倾向工具，基于 Jung 类型理论等公开框架，<strong>非 MBTI® 官方产品</strong>。结果仅供参考，不能替代专业心理咨询。</p>
+      </footer>
+    </section>
+
+    <!-- 答题 -->
+    <section id="view-test" class="view">
+      <header class="test-header">
+        <button class="btn ghost" id="btn-back-home">← 返回</button>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div id="progress-fill"></div></div>
+          <span id="progress-text">0 / 0</span>
+        </div>
+        <span id="module-badge" class="badge"></span>
+      </header>
+      <div class="question-card">
+        <p id="question-num" class="q-num"></p>
+        <h2 id="question-text"></h2>
+        <div id="likert-options" class="likert"></div>
+      </div>
+      <div class="nav-row">
+        <button class="btn secondary" id="btn-prev">上一题</button>
+        <button class="btn primary" id="btn-next">下一题</button>
+      </div>
+    </section>
+
+    <!-- 结果 -->
+    <section id="view-result" class="view">
+      <header class="hero compact">
+        <h1>测评结果</h1>
+        <p id="result-type" class="type-badge"></p>
+      </header>
+      <div id="consistency-banner" class="banner hidden"></div>
+      <div class="result-grid">
+        <div class="card">
+          <h2>16 型人格</h2>
+          <canvas id="chart-mbti" width="280" height="280"></canvas>
+          <div id="mbti-bars" class="bars"></div>
+          <div id="mbti-detail" class="detail"></div>
+        </div>
+        <div class="card">
+          <h2>大五人格 OCEAN</h2>
+          <canvas id="chart-ocean" width="280" height="280"></canvas>
+          <div id="ocean-bars" class="bars"></div>
+        </div>
+        <div class="card">
+          <h2>其他维度</h2>
+          <div id="other-results"></div>
+        </div>
+        <div class="card full-width">
+          <h2>详细解读</h2>
+          <div id="interpretation"></div>
+        </div>
+      </div>
+      <div class="btn-row center">
+        <button class="btn primary" id="btn-pdf-result">下载结果 PDF</button>
+        <button class="btn secondary" id="btn-copy-md">复制 Markdown</button>
+        <button class="btn secondary" id="btn-export-result">导出 JSON</button>
+        <button class="btn ghost" id="btn-retest">重新测试</button>
+        <button class="btn ghost" id="btn-home-result">返回首页</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="../js/catalog.js"></script>
+  <script src="../js/shell.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+  <script>Shell.inject();</script>
+</body>
+</html>
