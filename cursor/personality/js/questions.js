@@ -1,0 +1,2034 @@
+const PERSONALITY_TEST = {
+  version: '1.0.0',
+  modules: [
+  {
+    "id": "M1",
+    "name": "16型人格 (MBTI)",
+    "desc": "能量来源、信息获取、决策方式、生活方式",
+    "count": 60
+  },
+  {
+    "id": "M2",
+    "name": "Step II 子维度",
+    "desc": "更精细的四维倾向分析",
+    "count": 20
+  },
+  {
+    "id": "M3",
+    "name": "A/T 身份维度",
+    "desc": "自信型 vs 动荡型",
+    "count": 12
+  },
+  {
+    "id": "M4",
+    "name": "大五人格 (OCEAN)",
+    "desc": "开放性、尽责性、外向性、宜人性、神经质",
+    "count": 44
+  },
+  {
+    "id": "M5",
+    "name": "九型人格",
+    "desc": "核心动机与行为模式",
+    "count": 27
+  },
+  {
+    "id": "M6",
+    "name": "DISC 行为风格",
+    "desc": "支配、影响、稳健、谨慎",
+    "count": 16
+  },
+  {
+    "id": "M7",
+    "name": "霍兰德 RIASEC",
+    "desc": "职业兴趣类型",
+    "count": 18
+  }
+],
+  quickModules: ['M1', 'M4'],
+  likertLabels: ['非常不符合我', '较不符合我', '一般/视情况而定', '较符合我', '非常符合我'],
+  questions: [
+  {
+    "id": "q1",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "我在社交聚会中通常感到精力充沛",
+    "reverse": false
+  },
+  {
+    "id": "q2",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "我乐于主动与陌生人交谈",
+    "reverse": false
+  },
+  {
+    "id": "q3",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "我倾向于通过与人讨论来思考问题",
+    "reverse": false
+  },
+  {
+    "id": "q4",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "我享受成为众人关注的焦点",
+    "reverse": false
+  },
+  {
+    "id": "q5",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "长时间独处会让我感到沉闷",
+    "reverse": false
+  },
+  {
+    "id": "q6",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "我习惯边想边说通过表达整理思路",
+    "reverse": false
+  },
+  {
+    "id": "q7",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "我的朋友圈较广认识的人很多",
+    "reverse": false
+  },
+  {
+    "id": "q8",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "E",
+    "text": "电话或消息聊天对我来说轻松自然",
+    "reverse": false
+  },
+  {
+    "id": "q9",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "我需要独处时间来恢复精力",
+    "reverse": false
+  },
+  {
+    "id": "q10",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "我更喜欢与少数深交的朋友相处",
+    "reverse": false
+  },
+  {
+    "id": "q11",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "我倾向于先想清楚再开口表达",
+    "reverse": false
+  },
+  {
+    "id": "q12",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "我享受安静阅读或独自思考的时光",
+    "reverse": false
+  },
+  {
+    "id": "q13",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "大型聚会后我需要休息才能恢复",
+    "reverse": false
+  },
+  {
+    "id": "q14",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "我更喜欢一对一的深度对话",
+    "reverse": false
+  },
+  {
+    "id": "q15",
+    "module": "M1",
+    "dimension": "EI",
+    "pole": "I",
+    "text": "我通常在熟悉的小圈子里更自在",
+    "reverse": false
+  },
+  {
+    "id": "q16",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我更相信亲身经历和可验证的事实",
+    "reverse": false
+  },
+  {
+    "id": "q17",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我关注具体细节和实际步骤",
+    "reverse": false
+  },
+  {
+    "id": "q18",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我描述事物时倾向于准确具体",
+    "reverse": false
+  },
+  {
+    "id": "q19",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我更容易记住具体数据和事实",
+    "reverse": false
+  },
+  {
+    "id": "q20",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我倾向于按既定方法经验行事",
+    "reverse": false
+  },
+  {
+    "id": "q21",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我对「是什么」比「可能是什么」更感兴趣",
+    "reverse": false
+  },
+  {
+    "id": "q22",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "我更喜欢脚踏实地逐步推进",
+    "reverse": false
+  },
+  {
+    "id": "q23",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "S",
+    "text": "学习时我需要清晰的例子和步骤",
+    "reverse": false
+  },
+  {
+    "id": "q24",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我更相信直觉和整体印象",
+    "reverse": false
+  },
+  {
+    "id": "q25",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我关注未来可能性和整体概念",
+    "reverse": false
+  },
+  {
+    "id": "q26",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我描述事物时喜欢用比喻和联想",
+    "reverse": false
+  },
+  {
+    "id": "q27",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我更容易记住含义和关联而非细节",
+    "reverse": false
+  },
+  {
+    "id": "q28",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我倾向于尝试新方法和不同角度",
+    "reverse": false
+  },
+  {
+    "id": "q29",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我对「意味着什么」更感兴趣",
+    "reverse": false
+  },
+  {
+    "id": "q30",
+    "module": "M1",
+    "dimension": "SN",
+    "pole": "N",
+    "text": "我喜欢跳跃式思考看到多种可能",
+    "reverse": false
+  },
+  {
+    "id": "q31",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "做决定时我优先考虑逻辑和客观分析",
+    "reverse": false
+  },
+  {
+    "id": "q32",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "我倾向于直接指出问题即使可能让人不适",
+    "reverse": false
+  },
+  {
+    "id": "q33",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "我认为公平就是一视同仁按规则办事",
+    "reverse": false
+  },
+  {
+    "id": "q34",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "争论中我更在意道理是否站得住脚",
+    "reverse": false
+  },
+  {
+    "id": "q35",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "我更容易被逻辑严密的论证说服",
+    "reverse": false
+  },
+  {
+    "id": "q36",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "批评时我倾向于就事论事",
+    "reverse": false
+  },
+  {
+    "id": "q37",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "我倾向于保持客观不被情绪左右",
+    "reverse": false
+  },
+  {
+    "id": "q38",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "T",
+    "text": "我认为对事不对人很重要",
+    "reverse": false
+  },
+  {
+    "id": "q39",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "做决定时我优先考虑价值观和对他人的影响",
+    "reverse": false
+  },
+  {
+    "id": "q40",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "我倾向于委婉表达避免伤害他人感受",
+    "reverse": false
+  },
+  {
+    "id": "q41",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "我认为公平需要考虑每个人的具体情况",
+    "reverse": false
+  },
+  {
+    "id": "q42",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "争论中我更在意关系是否还能维持",
+    "reverse": false
+  },
+  {
+    "id": "q43",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "我更容易被真诚的情感和价值观打动",
+    "reverse": false
+  },
+  {
+    "id": "q44",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "批评时我会考虑对方的感受和接受度",
+    "reverse": false
+  },
+  {
+    "id": "q45",
+    "module": "M1",
+    "dimension": "TF",
+    "pole": "F",
+    "text": "我会先处理情绪再谈理性分析",
+    "reverse": false
+  },
+  {
+    "id": "q46",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "我更喜欢有计划有安排的生活",
+    "reverse": false
+  },
+  {
+    "id": "q47",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "我会提前完成任务避免最后一刻赶工",
+    "reverse": false
+  },
+  {
+    "id": "q48",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "我倾向于尽快做决定并付诸行动",
+    "reverse": false
+  },
+  {
+    "id": "q49",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "我的桌面和房间通常比较整洁有序",
+    "reverse": false
+  },
+  {
+    "id": "q50",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "我更喜欢有明确截止时间和步骤的项目",
+    "reverse": false
+  },
+  {
+    "id": "q51",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "旅行前我会详细查攻略订好行程",
+    "reverse": false
+  },
+  {
+    "id": "q52",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "清单和日程表对我很有帮助",
+    "reverse": false
+  },
+  {
+    "id": "q53",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "J",
+    "text": "我倾向于先定规则再执行",
+    "reverse": false
+  },
+  {
+    "id": "q54",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "P",
+    "text": "我更喜欢灵活随性的生活",
+    "reverse": false
+  },
+  {
+    "id": "q55",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "P",
+    "text": "我常在截止日期前才进入高效状态",
+    "reverse": false
+  },
+  {
+    "id": "q56",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "P",
+    "text": "我倾向于保留选项等信息再决定",
+    "reverse": false
+  },
+  {
+    "id": "q57",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "P",
+    "text": "我的环境可能较乱但我能找到东西",
+    "reverse": false
+  },
+  {
+    "id": "q58",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "P",
+    "text": "我更喜欢可以随时调整方向的项目",
+    "reverse": false
+  },
+  {
+    "id": "q59",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "E",
+    "text": "总体而言我在社交中精力充沛乐于与人互动",
+    "reverse": false,
+    "consistencyPair": "q60"
+  },
+  {
+    "id": "q60",
+    "module": "M1",
+    "dimension": "JP",
+    "pole": "I",
+    "text": "总体而言我更喜欢独处社交过多会消耗我的精力",
+    "reverse": false,
+    "consistencyPair": "q59"
+  },
+  {
+    "id": "q61",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "initiating",
+    "facetLabel": "主动发起",
+    "pole": "E",
+    "text": "我通常是群体中先开口或提议活动的人",
+    "reverse": false
+  },
+  {
+    "id": "q62",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "initiating",
+    "facetLabel": "主动发起",
+    "pole": "E",
+    "text": "在陌生场合我会主动打破沉默",
+    "reverse": false
+  },
+  {
+    "id": "q63",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "expressive",
+    "facetLabel": "热情表达",
+    "pole": "E",
+    "text": "我的情绪和想法容易从表情和语气中流露",
+    "reverse": false
+  },
+  {
+    "id": "q64",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "expressive",
+    "facetLabel": "热情表达",
+    "pole": "E",
+    "text": "我说话时常伴随丰富的肢体语言",
+    "reverse": false
+  },
+  {
+    "id": "q65",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "gregarious",
+    "facetLabel": "广交友",
+    "pole": "E",
+    "text": "我享受认识各行各业的人",
+    "reverse": false
+  },
+  {
+    "id": "q66",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "gregarious",
+    "facetLabel": "广交友",
+    "pole": "E",
+    "text": "我不介意与不太熟的人快速熟络",
+    "reverse": false
+  },
+  {
+    "id": "q67",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "reflective",
+    "facetLabel": "内省深思",
+    "pole": "I",
+    "text": "我习惯在行动前反复琢磨",
+    "reverse": false
+  },
+  {
+    "id": "q68",
+    "module": "M2",
+    "dimension": "EI",
+    "facet": "reflective",
+    "facetLabel": "内省深思",
+    "pole": "I",
+    "text": "我会定期回顾自己的经历和感受",
+    "reverse": false
+  },
+  {
+    "id": "q69",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "concrete",
+    "facetLabel": "具体务实",
+    "pole": "S",
+    "text": "我更喜欢讨论可落地执行的具体方案",
+    "reverse": false
+  },
+  {
+    "id": "q70",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "concrete",
+    "facetLabel": "具体务实",
+    "pole": "S",
+    "text": "我对抽象概念如果没有例子会难以把握",
+    "reverse": false
+  },
+  {
+    "id": "q71",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "practical",
+    "facetLabel": "注重实效",
+    "pole": "S",
+    "text": "我会优先选择经过验证的有效方法",
+    "reverse": false
+  },
+  {
+    "id": "q72",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "practical",
+    "facetLabel": "注重实效",
+    "pole": "S",
+    "text": "我对华而不实的创意耐心有限",
+    "reverse": false
+  },
+  {
+    "id": "q73",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "conceptual",
+    "facetLabel": "概念思维",
+    "pole": "N",
+    "text": "我善于从具体事物中提炼一般规律",
+    "reverse": false
+  },
+  {
+    "id": "q74",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "conceptual",
+    "facetLabel": "概念思维",
+    "pole": "N",
+    "text": "我喜欢讨论理论和模型",
+    "reverse": false
+  },
+  {
+    "id": "q75",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "imaginative",
+    "facetLabel": "想象创新",
+    "pole": "N",
+    "text": "我经常产生新颖的点子和联想",
+    "reverse": false
+  },
+  {
+    "id": "q76",
+    "module": "M2",
+    "dimension": "SN",
+    "facet": "imaginative",
+    "facetLabel": "想象创新",
+    "pole": "N",
+    "text": "我享受畅想未来各种可能场景",
+    "reverse": false
+  },
+  {
+    "id": "q77",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "logical",
+    "facetLabel": "逻辑分析",
+    "pole": "T",
+    "text": "我会系统分析问题的因果关系",
+    "reverse": false
+  },
+  {
+    "id": "q78",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "logical",
+    "facetLabel": "逻辑分析",
+    "pole": "T",
+    "text": "我认为情绪不应干扰判断",
+    "reverse": false
+  },
+  {
+    "id": "q79",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "tough",
+    "facetLabel": "直言不讳",
+    "pole": "T",
+    "text": "我会直接给出负面反馈如果认为有必要",
+    "reverse": false
+  },
+  {
+    "id": "q80",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "tough",
+    "facetLabel": "直言不讳",
+    "pole": "T",
+    "text": "我不介意成为唱反调的人",
+    "reverse": false
+  },
+  {
+    "id": "q81",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "empathetic",
+    "facetLabel": "共情关怀",
+    "pole": "F",
+    "text": "我能敏锐感知他人的情绪变化",
+    "reverse": false
+  },
+  {
+    "id": "q82",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "empathetic",
+    "facetLabel": "共情关怀",
+    "pole": "F",
+    "text": "他人的困难容易引起我的共鸣",
+    "reverse": false
+  },
+  {
+    "id": "q83",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "harmonious",
+    "facetLabel": "和谐导向",
+    "pole": "F",
+    "text": "我会主动化解团队中的紧张气氛",
+    "reverse": false
+  },
+  {
+    "id": "q84",
+    "module": "M2",
+    "dimension": "TF",
+    "facet": "harmonious",
+    "facetLabel": "和谐导向",
+    "pole": "F",
+    "text": "我尽量避免让任何人感到被排斥",
+    "reverse": false
+  },
+  {
+    "id": "q85",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "systematic",
+    "facetLabel": "系统规划",
+    "pole": "J",
+    "text": "我喜欢把大任务拆成可追踪的步骤",
+    "reverse": false
+  },
+  {
+    "id": "q86",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "systematic",
+    "facetLabel": "系统规划",
+    "pole": "J",
+    "text": "我倾向于按时间表推进工作",
+    "reverse": false
+  },
+  {
+    "id": "q87",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "decisive",
+    "facetLabel": "果断决策",
+    "pole": "J",
+    "text": "我倾向于快速拍板而非无限拖延",
+    "reverse": false
+  },
+  {
+    "id": "q88",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "decisive",
+    "facetLabel": "果断决策",
+    "pole": "J",
+    "text": "决定做出后我很少反复更改",
+    "reverse": false
+  },
+  {
+    "id": "q89",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "spontaneous",
+    "facetLabel": "灵活应变",
+    "pole": "P",
+    "text": "我喜欢根据当下情况即兴调整",
+    "reverse": false
+  },
+  {
+    "id": "q90",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "spontaneous",
+    "facetLabel": "灵活应变",
+    "pole": "P",
+    "text": "过多的条条框框让我感到压抑",
+    "reverse": false
+  },
+  {
+    "id": "q91",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "openEnded",
+    "facetLabel": "开放探索",
+    "pole": "P",
+    "text": "我享受没有固定答案的探索过程",
+    "reverse": false
+  },
+  {
+    "id": "q92",
+    "module": "M2",
+    "dimension": "JP",
+    "facet": "openEnded",
+    "facetLabel": "开放探索",
+    "pole": "P",
+    "text": "我倾向于保留多种备选方案",
+    "reverse": false
+  },
+  {
+    "id": "q93",
+    "module": "M3",
+    "pole": "A",
+    "text": "我对自己的能力比较有信心",
+    "reverse": false
+  },
+  {
+    "id": "q94",
+    "module": "M3",
+    "pole": "A",
+    "text": "压力下我通常仍能保持冷静",
+    "reverse": false
+  },
+  {
+    "id": "q95",
+    "module": "M3",
+    "pole": "A",
+    "text": "我不太容易因他人评价而动摇",
+    "reverse": false
+  },
+  {
+    "id": "q96",
+    "module": "M3",
+    "pole": "A",
+    "text": "面对挫折我较快恢复并继续向前",
+    "reverse": false
+  },
+  {
+    "id": "q97",
+    "module": "M3",
+    "pole": "A",
+    "text": "我很少反复纠结已经做出的决定",
+    "reverse": false
+  },
+  {
+    "id": "q98",
+    "module": "M3",
+    "pole": "A",
+    "text": "我倾向于认为事情最终会朝好的方向发展",
+    "reverse": false
+  },
+  {
+    "id": "q99",
+    "module": "M3",
+    "pole": "T",
+    "text": "我时常担心是否做得足够好",
+    "reverse": false
+  },
+  {
+    "id": "q100",
+    "module": "M3",
+    "pole": "T",
+    "text": "压力下我容易感到焦虑或自我怀疑",
+    "reverse": false
+  },
+  {
+    "id": "q101",
+    "module": "M3",
+    "pole": "T",
+    "text": "他人的批评会让我想很久",
+    "reverse": false
+  },
+  {
+    "id": "q102",
+    "module": "M3",
+    "pole": "T",
+    "text": "失败后我容易长时间反思自己的不足",
+    "reverse": false
+  },
+  {
+    "id": "q103",
+    "module": "M3",
+    "pole": "T",
+    "text": "我经常会想如果当时选了另一条路会怎样",
+    "reverse": false
+  },
+  {
+    "id": "q104",
+    "module": "M3",
+    "pole": "T",
+    "text": "我对自己的表现标准通常很高",
+    "reverse": false
+  },
+  {
+    "id": "q105",
+    "module": "M4",
+    "pole": "O",
+    "text": "我对新思想和新体验持开放态度",
+    "reverse": false,
+    "consistencyPair": "q113"
+  },
+  {
+    "id": "q106",
+    "module": "M4",
+    "pole": "O",
+    "text": "我喜欢探索不同文化观点和艺术形式",
+    "reverse": false
+  },
+  {
+    "id": "q107",
+    "module": "M4",
+    "pole": "O",
+    "text": "抽象概念和哲学问题让我感兴趣",
+    "reverse": false
+  },
+  {
+    "id": "q108",
+    "module": "M4",
+    "pole": "O",
+    "text": "我倾向于用创意方式解决问题",
+    "reverse": false
+  },
+  {
+    "id": "q109",
+    "module": "M4",
+    "pole": "O",
+    "text": "我享受尝试不熟悉的活动",
+    "reverse": false
+  },
+  {
+    "id": "q110",
+    "module": "M4",
+    "pole": "O",
+    "text": "我好奇心强乐于学习新领域",
+    "reverse": false
+  },
+  {
+    "id": "q111",
+    "module": "M4",
+    "pole": "O",
+    "text": "我不满足于常规做法常想改进",
+    "reverse": false
+  },
+  {
+    "id": "q112",
+    "module": "M4",
+    "pole": "O",
+    "text": "想象力是我重要的思维工具",
+    "reverse": false
+  },
+  {
+    "id": "q113",
+    "module": "M4",
+    "pole": "O",
+    "text": "我很少对抽象理论感兴趣",
+    "reverse": true,
+    "consistencyPair": "q105"
+  },
+  {
+    "id": "q114",
+    "module": "M4",
+    "pole": "O",
+    "text": "我更喜欢熟悉的事物而非新奇体验",
+    "reverse": true
+  },
+  {
+    "id": "q115",
+    "module": "M4",
+    "pole": "O",
+    "text": "我很少花时间思考哲学问题",
+    "reverse": true
+  },
+  {
+    "id": "q116",
+    "module": "M4",
+    "pole": "C",
+    "text": "我做事有条理很少丢三落四",
+    "reverse": false
+  },
+  {
+    "id": "q117",
+    "module": "M4",
+    "pole": "C",
+    "text": "我设定目标后会坚持执行",
+    "reverse": false
+  },
+  {
+    "id": "q118",
+    "module": "M4",
+    "pole": "C",
+    "text": "我注重细节追求高质量完成",
+    "reverse": false
+  },
+  {
+    "id": "q119",
+    "module": "M4",
+    "pole": "C",
+    "text": "我守时守信认真对待承诺",
+    "reverse": false
+  },
+  {
+    "id": "q120",
+    "module": "M4",
+    "pole": "C",
+    "text": "我倾向于提前规划而非临时抱佛脚",
+    "reverse": false
+  },
+  {
+    "id": "q121",
+    "module": "M4",
+    "pole": "C",
+    "text": "我工作认真负责不敷衍",
+    "reverse": false
+  },
+  {
+    "id": "q122",
+    "module": "M4",
+    "pole": "C",
+    "text": "我善于自我管理无需太多督促",
+    "reverse": false
+  },
+  {
+    "id": "q123",
+    "module": "M4",
+    "pole": "C",
+    "text": "我把完成该做的事放在优先位置",
+    "reverse": false
+  },
+  {
+    "id": "q124",
+    "module": "M4",
+    "pole": "C",
+    "text": "我有时难以坚持长期计划",
+    "reverse": true
+  },
+  {
+    "id": "q125",
+    "module": "M4",
+    "pole": "C",
+    "text": "我偶尔拖延重要任务",
+    "reverse": true
+  },
+  {
+    "id": "q126",
+    "module": "M4",
+    "pole": "C",
+    "text": "我不太在意细节是否完美",
+    "reverse": true
+  },
+  {
+    "id": "q127",
+    "module": "M4",
+    "pole": "E",
+    "text": "我在社交场合通常活跃健谈",
+    "reverse": false
+  },
+  {
+    "id": "q128",
+    "module": "M4",
+    "pole": "E",
+    "text": "我享受与他人互动获得能量",
+    "reverse": false
+  },
+  {
+    "id": "q129",
+    "module": "M4",
+    "pole": "E",
+    "text": "我倾向于主动发起社交",
+    "reverse": false
+  },
+  {
+    "id": "q130",
+    "module": "M4",
+    "pole": "E",
+    "text": "我在团队中常常是气氛带动者",
+    "reverse": false
+  },
+  {
+    "id": "q131",
+    "module": "M4",
+    "pole": "E",
+    "text": "我喜欢参加聚会或集体活动",
+    "reverse": false
+  },
+  {
+    "id": "q132",
+    "module": "M4",
+    "pole": "E",
+    "text": "我容易与新人建立联系",
+    "reverse": false
+  },
+  {
+    "id": "q133",
+    "module": "M4",
+    "pole": "E",
+    "text": "我表达观点时较为外向自信",
+    "reverse": false
+  },
+  {
+    "id": "q134",
+    "module": "M4",
+    "pole": "E",
+    "text": "我倾向于扩大而非缩小社交圈",
+    "reverse": false
+  },
+  {
+    "id": "q135",
+    "module": "M4",
+    "pole": "E",
+    "text": "我更喜欢独处而非社交",
+    "reverse": true
+  },
+  {
+    "id": "q136",
+    "module": "M4",
+    "pole": "E",
+    "text": "大型聚会常让我感到疲惫",
+    "reverse": true
+  },
+  {
+    "id": "q137",
+    "module": "M4",
+    "pole": "E",
+    "text": "我很少主动发起社交活动",
+    "reverse": true
+  },
+  {
+    "id": "q138",
+    "module": "M4",
+    "pole": "A",
+    "text": "我通常信任他人并愿意合作",
+    "reverse": false
+  },
+  {
+    "id": "q139",
+    "module": "M4",
+    "pole": "A",
+    "text": "我关心他人的感受和需求",
+    "reverse": false
+  },
+  {
+    "id": "q140",
+    "module": "M4",
+    "pole": "A",
+    "text": "我倾向于避免冲突维护和谐",
+    "reverse": false
+  },
+  {
+    "id": "q141",
+    "module": "M4",
+    "pole": "A",
+    "text": "我乐于帮助他人即使牺牲自己的时间",
+    "reverse": false
+  },
+  {
+    "id": "q142",
+    "module": "M4",
+    "pole": "A",
+    "text": "我容易原谅他人的过错",
+    "reverse": false
+  },
+  {
+    "id": "q143",
+    "module": "M4",
+    "pole": "A",
+    "text": "我重视团队氛围胜过个人表现",
+    "reverse": false
+  },
+  {
+    "id": "q144",
+    "module": "M4",
+    "pole": "A",
+    "text": "我说话做事会考虑他人感受",
+    "reverse": false
+  },
+  {
+    "id": "q145",
+    "module": "M4",
+    "pole": "A",
+    "text": "我倾向于看到他人优点而非挑剔",
+    "reverse": false
+  },
+  {
+    "id": "q146",
+    "module": "M4",
+    "pole": "A",
+    "text": "我对他人动机常持怀疑态度",
+    "reverse": true
+  },
+  {
+    "id": "q147",
+    "module": "M4",
+    "pole": "A",
+    "text": "竞争时我不太考虑对手感受",
+    "reverse": true
+  },
+  {
+    "id": "q148",
+    "module": "M4",
+    "pole": "A",
+    "text": "我倾向于直接表达不同意见即使可能伤人",
+    "reverse": true
+  },
+  {
+    "id": "q149",
+    "module": "M4",
+    "pole": "N",
+    "text": "我容易感到焦虑或紧张",
+    "reverse": false
+  },
+  {
+    "id": "q150",
+    "module": "M4",
+    "pole": "N",
+    "text": "小挫折可能让我情绪受影响较久",
+    "reverse": false
+  },
+  {
+    "id": "q151",
+    "module": "M4",
+    "pole": "N",
+    "text": "我时常担心可能出错的事情",
+    "reverse": false
+  },
+  {
+    "id": "q152",
+    "module": "M4",
+    "pole": "N",
+    "text": "我对批评或否定比较敏感",
+    "reverse": false
+  },
+  {
+    "id": "q153",
+    "module": "M4",
+    "pole": "N",
+    "text": "我容易感到压力大",
+    "reverse": false
+  },
+  {
+    "id": "q154",
+    "module": "M4",
+    "pole": "N",
+    "text": "我的情绪起伏相对明显",
+    "reverse": false
+  },
+  {
+    "id": "q155",
+    "module": "M4",
+    "pole": "N",
+    "text": "我有时会过度思考负面可能性",
+    "reverse": false
+  },
+  {
+    "id": "q156",
+    "module": "M4",
+    "pole": "N",
+    "text": "我需要在不确定时更多 reassurance",
+    "reverse": false
+  },
+  {
+    "id": "q157",
+    "module": "M4",
+    "pole": "N",
+    "text": "我通常情绪稳定很少焦虑",
+    "reverse": true
+  },
+  {
+    "id": "q158",
+    "module": "M4",
+    "pole": "N",
+    "text": "失败后我很快就能恢复平静",
+    "reverse": true
+  },
+  {
+    "id": "q159",
+    "module": "M4",
+    "pole": "N",
+    "text": "我很少为尚未发生的事担忧",
+    "reverse": true
+  },
+  {
+    "id": "q160",
+    "module": "M5",
+    "pole": "1",
+    "text": "我有较强的对错标准和原则感",
+    "reverse": false
+  },
+  {
+    "id": "q161",
+    "module": "M5",
+    "pole": "1",
+    "text": "我对自己和他人都有较高要求",
+    "reverse": false
+  },
+  {
+    "id": "q162",
+    "module": "M5",
+    "pole": "1",
+    "text": "我很难对明显的不公或不妥视而不见",
+    "reverse": false
+  },
+  {
+    "id": "q163",
+    "module": "M5",
+    "pole": "2",
+    "text": "我很自然关心他人是否需要帮助",
+    "reverse": false
+  },
+  {
+    "id": "q164",
+    "module": "M5",
+    "pole": "2",
+    "text": "被他人需要让我感到有价值",
+    "reverse": false
+  },
+  {
+    "id": "q165",
+    "module": "M5",
+    "pole": "2",
+    "text": "我倾向于把他人需求放在自己之前",
+    "reverse": false
+  },
+  {
+    "id": "q166",
+    "module": "M5",
+    "pole": "3",
+    "text": "我很在意成就是否被认可",
+    "reverse": false
+  },
+  {
+    "id": "q167",
+    "module": "M5",
+    "pole": "3",
+    "text": "我善于展示能力并追求高效结果",
+    "reverse": false
+  },
+  {
+    "id": "q168",
+    "module": "M5",
+    "pole": "3",
+    "text": "我倾向于设定并达成可见的目标",
+    "reverse": false
+  },
+  {
+    "id": "q169",
+    "module": "M5",
+    "pole": "4",
+    "text": "我追求独特性和深层情感体验",
+    "reverse": false
+  },
+  {
+    "id": "q170",
+    "module": "M5",
+    "pole": "4",
+    "text": "我常感到与他人有所不同",
+    "reverse": false
+  },
+  {
+    "id": "q171",
+    "module": "M5",
+    "pole": "4",
+    "text": "美感和深度对我很重要",
+    "reverse": false
+  },
+  {
+    "id": "q172",
+    "module": "M5",
+    "pole": "5",
+    "text": "我需要大量独处时间思考和充电",
+    "reverse": false
+  },
+  {
+    "id": "q173",
+    "module": "M5",
+    "pole": "5",
+    "text": "我倾向于观察分析而非立刻参与",
+    "reverse": false
+  },
+  {
+    "id": "q174",
+    "module": "M5",
+    "pole": "5",
+    "text": "我对知识和理解有强烈渴望",
+    "reverse": false
+  },
+  {
+    "id": "q175",
+    "module": "M5",
+    "pole": "6",
+    "text": "我对安全和可靠性较为敏感",
+    "reverse": false
+  },
+  {
+    "id": "q176",
+    "module": "M5",
+    "pole": "6",
+    "text": "我会预想风险并寻求支持或确认",
+    "reverse": false
+  },
+  {
+    "id": "q177",
+    "module": "M5",
+    "pole": "6",
+    "text": "我对信任的人非常忠诚",
+    "reverse": false
+  },
+  {
+    "id": "q178",
+    "module": "M5",
+    "pole": "7",
+    "text": "我追求多样体验和乐观可能性",
+    "reverse": false
+  },
+  {
+    "id": "q179",
+    "module": "M5",
+    "pole": "7",
+    "text": "我不喜欢被束缚或长时间无聊",
+    "reverse": false
+  },
+  {
+    "id": "q180",
+    "module": "M5",
+    "pole": "7",
+    "text": "我倾向于同时保持多个选项开放",
+    "reverse": false
+  },
+  {
+    "id": "q181",
+    "module": "M5",
+    "pole": "8",
+    "text": "我倾向于直接掌控局面保护弱者",
+    "reverse": false
+  },
+  {
+    "id": "q182",
+    "module": "M5",
+    "pole": "8",
+    "text": "我对不公会本能地反应强烈",
+    "reverse": false
+  },
+  {
+    "id": "q183",
+    "module": "M5",
+    "pole": "8",
+    "text": "我不怕冲突并愿意站出来说话",
+    "reverse": false
+  },
+  {
+    "id": "q184",
+    "module": "M5",
+    "pole": "9",
+    "text": "我倾向于回避冲突维持和平",
+    "reverse": false
+  },
+  {
+    "id": "q185",
+    "module": "M5",
+    "pole": "9",
+    "text": "我容易看到各方观点并难以抉择",
+    "reverse": false
+  },
+  {
+    "id": "q186",
+    "module": "M5",
+    "pole": "9",
+    "text": "我享受舒适稳定节奏不太爱折腾",
+    "reverse": false
+  },
+  {
+    "id": "q187",
+    "module": "M6",
+    "pole": "D",
+    "text": "我倾向于快速决策并推动结果",
+    "reverse": false
+  },
+  {
+    "id": "q188",
+    "module": "M6",
+    "pole": "D",
+    "text": "面对障碍我会直接挑战而非回避",
+    "reverse": false
+  },
+  {
+    "id": "q189",
+    "module": "M6",
+    "pole": "D",
+    "text": "我享受竞争和赢的感觉",
+    "reverse": false
+  },
+  {
+    "id": "q190",
+    "module": "M6",
+    "pole": "D",
+    "text": "我倾向于掌控局面主导方向",
+    "reverse": false
+  },
+  {
+    "id": "q191",
+    "module": "M6",
+    "pole": "I",
+    "text": "我善于用热情感染和说服他人",
+    "reverse": false
+  },
+  {
+    "id": "q192",
+    "module": "M6",
+    "pole": "I",
+    "text": "我享受社交并建立广泛人脉",
+    "reverse": false
+  },
+  {
+    "id": "q193",
+    "module": "M6",
+    "pole": "I",
+    "text": "我表达观点时富有感染力",
+    "reverse": false
+  },
+  {
+    "id": "q194",
+    "module": "M6",
+    "pole": "I",
+    "text": "我喜欢营造轻松愉快的氛围",
+    "reverse": false
+  },
+  {
+    "id": "q195",
+    "module": "M6",
+    "pole": "S",
+    "text": "我重视稳定和可预期的环境",
+    "reverse": false
+  },
+  {
+    "id": "q196",
+    "module": "M6",
+    "pole": "S",
+    "text": "我倾向于耐心倾听并支持团队",
+    "reverse": false
+  },
+  {
+    "id": "q197",
+    "module": "M6",
+    "pole": "S",
+    "text": "我不轻易改变已建立的惯例",
+    "reverse": false
+  },
+  {
+    "id": "q198",
+    "module": "M6",
+    "pole": "S",
+    "text": "我忠诚可靠是他人可依赖的伙伴",
+    "reverse": false
+  },
+  {
+    "id": "q199",
+    "module": "M6",
+    "pole": "C",
+    "text": "我注重准确性和质量标准",
+    "reverse": false
+  },
+  {
+    "id": "q200",
+    "module": "M6",
+    "pole": "C",
+    "text": "我倾向于按规则和流程办事",
+    "reverse": false
+  },
+  {
+    "id": "q201",
+    "module": "M6",
+    "pole": "C",
+    "text": "我会仔细分析数据再做决定",
+    "reverse": false
+  },
+  {
+    "id": "q202",
+    "module": "M6",
+    "pole": "C",
+    "text": "我对错误和疏漏容忍度较低",
+    "reverse": false
+  },
+  {
+    "id": "q203",
+    "module": "M7",
+    "pole": "R",
+    "text": "我喜欢动手操作工具或机械设备",
+    "reverse": false
+  },
+  {
+    "id": "q204",
+    "module": "M7",
+    "pole": "R",
+    "text": "户外或实体劳动让我有成就感",
+    "reverse": false
+  },
+  {
+    "id": "q205",
+    "module": "M7",
+    "pole": "R",
+    "text": "我享受修理建造或组装",
+    "reverse": false
+  },
+  {
+    "id": "q206",
+    "module": "M7",
+    "pole": "I",
+    "text": "我喜欢研究问题和分析数据",
+    "reverse": false
+  },
+  {
+    "id": "q207",
+    "module": "M7",
+    "pole": "I",
+    "text": "阅读科学技术内容让我着迷",
+    "reverse": false
+  },
+  {
+    "id": "q208",
+    "module": "M7",
+    "pole": "I",
+    "text": "我享受独立探索未知领域",
+    "reverse": false
+  },
+  {
+    "id": "q209",
+    "module": "M7",
+    "pole": "A",
+    "text": "我享受创作音乐写作或视觉艺术",
+    "reverse": false
+  },
+  {
+    "id": "q210",
+    "module": "M7",
+    "pole": "A",
+    "text": "我重视自我表达和审美",
+    "reverse": false
+  },
+  {
+    "id": "q211",
+    "module": "M7",
+    "pole": "A",
+    "text": "我不喜欢过于刻板的重复工作",
+    "reverse": false
+  },
+  {
+    "id": "q212",
+    "module": "M7",
+    "pole": "S",
+    "text": "我喜欢教导辅导或帮助他人的工作",
+    "reverse": false
+  },
+  {
+    "id": "q213",
+    "module": "M7",
+    "pole": "S",
+    "text": "与人建立信任关系让我满足",
+    "reverse": false
+  },
+  {
+    "id": "q214",
+    "module": "M7",
+    "pole": "S",
+    "text": "我关注他人的成长和幸福",
+    "reverse": false
+  },
+  {
+    "id": "q215",
+    "module": "M7",
+    "pole": "E",
+    "text": "我喜欢说服领导或销售类活动",
+    "reverse": false
+  },
+  {
+    "id": "q216",
+    "module": "M7",
+    "pole": "E",
+    "text": "我享受影响他人并推动变革",
+    "reverse": false
+  },
+  {
+    "id": "q217",
+    "module": "M7",
+    "pole": "E",
+    "text": "商业谈判或创业让我兴奋",
+    "reverse": false
+  },
+  {
+    "id": "q218",
+    "module": "M7",
+    "pole": "C",
+    "text": "我喜欢有条理的数据处理和文书工作",
+    "reverse": false
+  },
+  {
+    "id": "q219",
+    "module": "M7",
+    "pole": "C",
+    "text": "遵循明确规范让我感到安心",
+    "reverse": false
+  },
+  {
+    "id": "q220",
+    "module": "M7",
+    "pole": "C",
+    "text": "我擅长组织信息和维持秩序",
+    "reverse": false
+  }
+],
+  interpretations: {
+    mbti: {
+  "INTJ": {
+    "name": "建筑师",
+    "summary": "独立战略思考者，善于构建长期系统与规划。",
+    "strengths": [
+      "战略眼光",
+      "专注力强",
+      "逻辑严密"
+    ],
+    "growth": [
+      "注意他人情感",
+      "避免完美主义"
+    ]
+  },
+  "INTP": {
+    "name": "逻辑学家",
+    "summary": "好奇的分析者，热爱理论与逻辑。",
+    "strengths": [
+      "分析能力",
+      "创新思维",
+      "客观理性"
+    ],
+    "growth": [
+      "付诸实践",
+      "关注截止日期"
+    ]
+  },
+  "ENTJ": {
+    "name": "指挥官",
+    "summary": "天生的领导者，目标导向，善于组织资源。",
+    "strengths": [
+      "领导力",
+      "决断力",
+      "高效执行"
+    ],
+    "growth": [
+      "倾听他人",
+      "关注过程感受"
+    ]
+  },
+  "ENTP": {
+    "name": "辩论家",
+    "summary": "机智的创新者，喜欢挑战常规。",
+    "strengths": [
+      "创意丰富",
+      "适应力强",
+      "思维敏捷"
+    ],
+    "growth": [
+      "完成项目",
+      "关注细节"
+    ]
+  },
+  "INFJ": {
+    "name": "提倡者",
+    "summary": "理想主义者，具有深刻洞察。",
+    "strengths": [
+      "洞察力强",
+      "有原则",
+      "富有同理心"
+    ],
+    "growth": [
+      "避免理想化",
+      "设定边界"
+    ]
+  },
+  "INFP": {
+    "name": "调停者",
+    "summary": "价值观驱动的理想主义者。",
+    "strengths": [
+      "创造力",
+      "共情能力",
+      "忠诚"
+    ],
+    "growth": [
+      "提高执行力",
+      "面对冲突"
+    ]
+  },
+  "ENFJ": {
+    "name": "主人公",
+    "summary": "富有魅力的激励者，关注他人成长。",
+    "strengths": [
+      "鼓舞他人",
+      "组织沟通",
+      "责任感"
+    ],
+    "growth": [
+      "避免过度付出",
+      "关注自身需求"
+    ]
+  },
+  "ENFP": {
+    "name": "竞选者",
+    "summary": "热情的自由灵魂，充满可能性。",
+    "strengths": [
+      "热情感染",
+      "创意无限",
+      "适应变化"
+    ],
+    "growth": [
+      "聚焦重点",
+      "管理精力"
+    ]
+  },
+  "ISTJ": {
+    "name": "物流师",
+    "summary": "可靠务实，重规则与责任。",
+    "strengths": [
+      "可靠",
+      "细致",
+      "有条理"
+    ],
+    "growth": [
+      "接受变化",
+      "表达情感"
+    ]
+  },
+  "ISFJ": {
+    "name": "守卫者",
+    "summary": "默默奉献的保护者，细致关怀他人。",
+    "strengths": [
+      "奉献精神",
+      "观察细致",
+      "忠诚"
+    ],
+    "growth": [
+      "assert自身需求",
+      "接受变化"
+    ]
+  },
+  "ESTJ": {
+    "name": "总经理",
+    "summary": "高效组织者，重视秩序与结果。",
+    "strengths": [
+      "组织能力",
+      "执行力",
+      "可靠"
+    ],
+    "growth": [
+      "灵活变通",
+      "关注情感"
+    ]
+  },
+  "ESFJ": {
+    "name": "执政官",
+    "summary": "热心肠的协调者，重视和谐与共识。",
+    "strengths": [
+      "社交能力",
+      "合作精神",
+      "关怀他人"
+    ],
+    "growth": [
+      "接受不同观点",
+      "独立决策"
+    ]
+  },
+  "ISTP": {
+    "name": "鉴赏家",
+    "summary": "冷静的动手者，善于解决具体问题。",
+    "strengths": [
+      "动手能力",
+      "冷静分析",
+      "独立"
+    ],
+    "growth": [
+      "长期规划",
+      "情感沟通"
+    ]
+  },
+  "ISFP": {
+    "name": "探险家",
+    "summary": "温和的艺术家，享受当下，追求美感。",
+    "strengths": [
+      "审美感",
+      "灵活",
+      "共情"
+    ],
+    "growth": [
+      "长期目标",
+      "面对冲突"
+    ]
+  },
+  "ESTP": {
+    "name": "企业家",
+    "summary": "行动派冒险家，善于把握当下机会。",
+    "strengths": [
+      "行动力",
+      "现实感",
+      "适应力"
+    ],
+    "growth": [
+      "长期规划",
+      "深度思考"
+    ]
+  },
+  "ESFP": {
+    "name": "表演者",
+    "summary": "活力四射，享受当下，带动气氛。",
+    "strengths": [
+      "活力",
+      "社交魅力",
+      "乐观"
+    ],
+    "growth": [
+      "长期规划",
+      "深度专注"
+    ]
+  }
+},
+    enneagram: {
+  "1": {
+    "name": "完美主义者",
+    "summary": "追求正确与改进，有强烈原则感。"
+  },
+  "2": {
+    "name": "助人者",
+    "summary": "通过帮助他人获得价值感。"
+  },
+  "3": {
+    "name": "成就者",
+    "summary": "目标驱动，注重形象与成功。"
+  },
+  "4": {
+    "name": "Individualist",
+    "summary": "追求独特与深度，情感丰富。"
+  },
+  "5": {
+    "name": "Investigator",
+    "summary": "渴望知识与理解，独立观察。"
+  },
+  "6": {
+    "name": "忠诚者",
+    "summary": "重视安全与信任，忠诚可靠。"
+  },
+  "7": {
+    "name": "Enthusiast",
+    "summary": "追求多样与乐观，充满创意。"
+  },
+  "8": {
+    "name": "挑战者",
+    "summary": "强势保护者，直接果断。"
+  },
+  "9": {
+    "name": "Peacemaker",
+    "summary": "追求和谐与稳定，避免冲突。"
+  }
+},
+    disc: {
+  "D": {
+    "name": "支配型",
+    "summary": "直接果断，结果导向。"
+  },
+  "I": {
+    "name": "影响型",
+    "summary": "热情乐观，善于说服。"
+  },
+  "S": {
+    "name": "稳健型",
+    "summary": "耐心可靠，重视稳定。"
+  },
+  "C": {
+    "name": "谨慎型",
+    "summary": "精确分析，重质量。"
+  }
+},
+    riasec: {
+  "R": "实用/现实型",
+  "I": "研究/分析型",
+  "A": "艺术/创意型",
+  "S": "社会/服务型",
+  "E": "企业/影响型",
+  "C": "常规/组织型"
+},
+    oceanLabels: {
+  "O": "开放性",
+  "C": "尽责性",
+  "E": "外向性",
+  "A": "宜人性",
+  "N": "神经质"
+},
+  },
+};
