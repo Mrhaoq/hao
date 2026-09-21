@@ -3,13 +3,46 @@ const ValSensWizard = (function () {
   const MIN_SENS = 0.05;
   const MAX_SENS = 5;
   const MAX_ROUNDS = 3;
-  const MODES = ['gridshot', 'tracking', 'micro'];
-  const WEIGHT = { gridshot: 0.35, tracking: 0.35, micro: 0.3 };
+  const MODES = ['placement', 'flick', 'micro'];
+  const WEIGHT = { placement: 0.4, flick: 0.35, micro: 0.25 };
 
   function $(id) { return document.getElementById(id); }
 
   function clamp(n) {
     return Math.min(MAX_SENS, Math.max(MIN_SENS, n));
+  }
+
+  function summaryLine(sig) {
+    const pct = Math.round((sig.hsRate || 0) * 100);
+    const dir = sig.combined > 0.15 ? '略偏低敏' : sig.combined < -0.15 ? '略偏高敏' : '接近合适';
+    if (sig.kind === 'tracking') {
+      return '过冲 ' + sig.overshoots + ' · 信号 ' + dir;
+    }
+    return '爆头率 ' + pct + '%（' + (sig.headshots || 0) + '/' + (sig.hits || 0) +
+      '）· 空枪 ' + (sig.misses || 0) + ' · ' + dir;
+  }
+
+  function sumField(session, key) {
+    let n = 0;
+    (session.log || []).forEach(function (row) {
+      (row.signals || []).forEach(function (s) {
+        n += Number(s[key]) || 0;
+      });
+    });
+    return n;
+  }
+
+  function avgHs(session) {
+    let heads = 0;
+    let hits = 0;
+    (session.log || []).forEach(function (row) {
+      (row.signals || []).forEach(function (s) {
+        heads += Number(s.headshots) || 0;
+        hits += Number(s.hits) || 0;
+      });
+    });
+    if (!hits) return 0;
+    return heads / hits;
   }
 
   function habits() {
@@ -76,8 +109,16 @@ const ValSensWizard = (function () {
   }
 
   function modeTitle(session) {
-    const names = { gridshot: 'Gridshot', tracking: '跟枪 Tracking', micro: '微修正 Micro' };
-    const kind = MODES[session.modeIndex];
+    const names = {
+      placement: '头线点射',
+      flick: '甩头 Flick',
+      gridshot: '甩头 Flick',
+      micro: '爆头微点',
+      tracking: '跟枪 Tracking'
+    };
+    const kind = session.kind === 'free' && session.freeKind
+      ? session.freeKind
+      : (session.kind === 'ab' ? 'flick' : MODES[session.modeIndex]);
     if (session.kind === 'free') return '自由训练 · ' + names[kind];
     if (session.kind === 'ab') return session.ab && session.ab.phase === 'b' ? 'A/B · 偏高候选' : 'A/B · 偏低候选';
     return '第 ' + session.round + ' / ' + MAX_ROUNDS + ' 轮 · ' + names[kind];
@@ -122,7 +163,10 @@ const ValSensWizard = (function () {
         dpi: session.dpi,
         cm360: cm,
         source: source || 'wizard',
-        log: session.log
+        log: session.log,
+        hsRate: avgHs(session),
+        headshots: sumField(session, 'headshots'),
+        shots: sumField(session, 'shots')
       }
     });
     ValSensStorage.addHistory({
@@ -143,10 +187,12 @@ const ValSensWizard = (function () {
     $('play-meta').textContent = modeTitle(session);
     $('play-sens-line').textContent = '当前灵敏度 ' + SensMath.formatSensGame(session.estimate) +
       ' @ ' + session.dpi + ' DPI';
-    let kind = MODES[session.modeIndex];
+    let kind = session.kind === 'free' && session.freeKind
+      ? session.freeKind
+      : MODES[session.modeIndex];
     let testSens = session.estimate;
     if (session.kind === 'ab' && session.ab) {
-      kind = 'gridshot';
+      kind = 'flick';
       testSens = session.ab.phase === 'b' ? session.ab.higher : session.ab.lower;
       $('play-sens-line').textContent = (session.ab.phase === 'b' ? '偏高 ' : '偏低 ') +
         SensMath.formatSensGame(testSens) + ' @ ' + session.dpi + ' DPI';
@@ -158,7 +204,7 @@ const ValSensWizard = (function () {
       durationMs: session.kind === 'ab' ? 20000 : AimModes.duration(kind),
       title: modeTitle(session),
       overlayTitle: '点击锁定鼠标并开始',
-      overlaySub: '准星碰到靶即命中，无需点击。倒计时在锁定后开始。',
+      overlaySub: AimModes.fireHint(kind) + '。倒计时在锁定后开始。',
       onEnd: function (result) {
         onModeEnd(session, result);
       }
@@ -176,8 +222,7 @@ const ValSensWizard = (function () {
       const overlaySub = document.getElementById('play-overlay-sub');
       const overlayBtn = document.getElementById('play-overlay-btn');
       overlayTitle.textContent = '自由训练结束';
-      overlaySub.textContent = '命中 ' + sig.hits + ' · 过冲 ' + sig.overshoots +
-        ' · 信号 ' + (sig.combined > 0.15 ? '略偏低敏' : sig.combined < -0.15 ? '略偏高敏' : '接近合适');
+      overlaySub.textContent = summaryLine(sig);
       overlayBtn.hidden = false;
       overlayBtn.textContent = '返回向导';
       AimEngine.setOverlayAction(function () {
@@ -190,12 +235,12 @@ const ValSensWizard = (function () {
 
     if (session.kind === 'ab') {
       if (session.ab.phase === 'a') {
-        session.ab.scoreA = sig.hits - sig.overshoots * 0.4 + (sig.combined > 0 ? 0 : 0.2);
+        session.ab.scoreA = sig.abScore != null ? sig.abScore : (sig.hits - sig.overshoots * 0.4);
         session.ab.phase = 'b';
         launchCurrent(session);
         return;
       }
-      session.ab.scoreB = sig.hits - sig.overshoots * 0.4;
+      session.ab.scoreB = sig.abScore != null ? sig.abScore : (sig.hits - sig.overshoots * 0.4);
       const pickHigh = session.ab.scoreB >= session.ab.scoreA;
       session.estimate = clamp(pickHigh ? session.ab.higher : session.ab.lower);
       session.log.push({
@@ -259,7 +304,9 @@ const ValSensWizard = (function () {
     const dpi = Number($('wz-dpi').value) || 800;
     const estimate = startSensFromProfile();
     const session = emptySession('free', dpi, estimate, 0);
-    session.modeIndex = Math.max(0, MODES.indexOf(kind));
+    const idx = MODES.indexOf(kind);
+    session.modeIndex = idx >= 0 ? idx : 0;
+    session.freeKind = kind;
     launchCurrent(session);
   }
 

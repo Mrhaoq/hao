@@ -107,6 +107,7 @@ const ValSensApp = (function () {
       $('rs-edpi').textContent = '—';
       $('rs-cm').textContent = '—';
       $('rs-source').textContent = '尚未生成';
+      if ($('rs-hs')) $('rs-hs').textContent = '—';
       $('rs-rounds').replaceChildren();
       return;
     }
@@ -116,6 +117,11 @@ const ValSensApp = (function () {
     $('rs-edpi').textContent = SensMath.formatEdpi(SensMath.edpi(src.dpi, src.sens));
     $('rs-cm').textContent = SensMath.formatCm(src.cm360);
     $('rs-source').textContent = sourceLabel(src.source);
+    if ($('rs-hs')) {
+      $('rs-hs').textContent = src.hsRate != null
+        ? Math.round(src.hsRate * 100) + '%'
+        : '—';
+    }
     const ol = $('rs-rounds');
     ol.replaceChildren();
     const log = src.log || [];
@@ -133,7 +139,17 @@ const ValSensApp = (function () {
           SensMath.formatSensGame(row.higher) + '）';
       } else {
         const dir = row.combined > 0.12 ? '建议升高' : row.combined < -0.12 ? '建议降低' : '接近合适';
-        li.textContent = '第 ' + row.round + ' 轮 ' + dir + ' → ' + SensMath.formatSensGame(row.next);
+        let hs = '';
+        if (row.signals && row.signals.length) {
+          let heads = 0;
+          let hits = 0;
+          row.signals.forEach(function (s) {
+            heads += Number(s.headshots) || 0;
+            hits += Number(s.hits) || 0;
+          });
+          if (hits) hs = ' · 爆头率 ' + Math.round(heads / hits * 100) + '%';
+        }
+        li.textContent = '第 ' + row.round + ' 轮 ' + dir + ' → ' + SensMath.formatSensGame(row.next) + hs;
       }
       ol.appendChild(li);
     });

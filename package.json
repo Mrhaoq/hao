@@ -1,0 +1,15 @@
+{
+  "name": "hao-site",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npx pnpm@9.15.0 --filter @hao/web dev",
+    "dev:api": "npx pnpm@9.15.0 --filter @hao/api dev",
+    "build": "npx pnpm@9.15.0 --filter @hao/web build",
+    "build:api": "npx pnpm@9.15.0 --filter @hao/api build",
+    "deploy": "npx pnpm@9.15.0 --filter @hao/web build && npx wrangler pages deploy apps/web/dist --project-name=cursor-personality-test --branch=main"
+  }
+}

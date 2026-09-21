@@ -11,7 +11,7 @@
   <main class="vs-main">
     <header class="vs-hero">
       <h1>无畏契约灵敏度工坊</h1>
-      <p>网页打靶测手感，生成可直接填进游戏的腰射灵敏度。准星碰到靶即命中，无需点击。</p>
+      <p>用爆头点射测手感，生成可直接填进游戏的腰射灵敏度。甩枪左键开火，打头部才算爆头。</p>
     </header>
 
     <nav class="vs-tabs" role="tablist">
@@ -43,7 +43,7 @@
             <input id="wz-old-sens" type="number" min="0" max="5" step="0.001" placeholder="没有可留空" />
           </label>
         </div>
-        <p class="vs-note">习惯标签会决定起始 cm/360，随后仍由打靶结果收敛。</p>
+        <p class="vs-note">习惯标签只影响起始区间，最终灵敏度由爆头点射结果收敛。</p>
         <div class="vs-chip-row" id="wz-habits">
           <button type="button" class="vs-chip" data-habit="flick">甩枪</button>
           <button type="button" class="vs-chip" data-habit="track">跟枪</button>
@@ -57,16 +57,17 @@
         <div class="vs-btn-row">
           <button type="button" class="vs-btn vs-btn-primary" id="wz-start">开始完整流程</button>
         </div>
-        <p class="vs-note">完整流程：3 轮 Gridshot / 跟枪 / 微调（碰靶）→ 网页 A/B 对比 → 输出通用灵敏度。</p>
+        <p class="vs-note">完整流程：头线点射 / 甩头 / 爆头微点（左键开火）→ 网页 A/B → 输出最合适的通用灵敏度。</p>
       </div>
 
       <div class="vs-card">
         <h2>自由训练</h2>
-        <p class="vs-note">单关练习，不改最终结果。碰到即命中，画面中央为准星。</p>
+        <p class="vs-note">单关练习，不改最终结果。点射关左键开火；跟枪只需贴住。</p>
         <div class="vs-btn-row">
-          <button type="button" class="vs-btn vs-btn-secondary" data-free="gridshot">Gridshot</button>
+          <button type="button" class="vs-btn vs-btn-secondary" data-free="placement">头线点射</button>
+          <button type="button" class="vs-btn vs-btn-secondary" data-free="flick">甩头 Flick</button>
+          <button type="button" class="vs-btn vs-btn-secondary" data-free="micro">爆头微点</button>
           <button type="button" class="vs-btn vs-btn-secondary" data-free="tracking">跟枪 Tracking</button>
-          <button type="button" class="vs-btn vs-btn-secondary" data-free="micro">微修正 Micro</button>
         </div>
       </div>
     </section>
@@ -81,7 +82,7 @@
           <canvas id="aim-canvas" width="960" height="540" tabindex="0"></canvas>
           <div class="vs-stage-overlay" id="play-overlay">
             <p class="vs-overlay-title" id="play-overlay-title">点击开始</p>
-            <p class="vs-note" id="play-overlay-sub">锁定鼠标后，准星碰到靶即可得分，不需要点击。</p>
+            <p class="vs-note" id="play-overlay-sub">锁定鼠标后，左键开火打头部。跟枪关只需贴住。</p>
             <button type="button" class="vs-btn vs-btn-primary" id="play-overlay-btn">锁定鼠标并开始</button>
           </div>
         </div>
@@ -101,6 +102,7 @@
           <div><dt>eDPI</dt><dd id="rs-edpi">—</dd></div>
           <div><dt>约 cm/360</dt><dd id="rs-cm">—</dd></div>
           <div><dt>来源</dt><dd id="rs-source">—</dd></div>
+          <div><dt>测试爆头率</dt><dd id="rs-hs">—</dd></div>
         </dl>
         <div class="vs-btn-row">
           <button type="button" class="vs-btn vs-btn-primary" id="rs-copy">复制灵敏度</button>
@@ -108,7 +110,7 @@
           <button type="button" class="vs-btn vs-btn-secondary" id="rs-retune">再测一轮微调</button>
         </div>
         <p class="vs-hint" id="rs-copy-hint" hidden></p>
-        <p class="vs-note">网页 FOV 与游戏不会完全一致，但 yaw=0.07 与 DPI 对齐后，该数字可直接用于通用灵敏度。请再进训练场确认手感。</p>
+        <p class="vs-note">网页 FOV 与游戏不会完全一致，但 yaw=0.07 与 DPI 对齐后，该数字可直接用于通用灵敏度。推荐值按爆头点射收敛，请再进训练场确认。</p>
       </div>
 
       <div class="vs-card">
@@ -120,7 +122,7 @@
     <section id="tab-toolbox" class="vs-panel" role="tabpanel" hidden>
       <div class="vs-card">
         <h2>网页 A/B 对比</h2>
-        <p class="vs-note">两个候选各打一轮短 Gridshot，碰到即命中。用得分更高的一侧更新灵敏度。</p>
+        <p class="vs-note">两个候选各打一轮短甩头点射。爆头率更高的一侧作为最终灵敏度。</p>
         <div class="vs-form-grid">
           <label>偏低候选
             <input id="ab-lower" type="number" min="0.05" max="5" step="0.001" value="0.30" />

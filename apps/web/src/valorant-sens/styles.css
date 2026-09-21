@@ -1,0 +1,313 @@
+.vs-main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.vs-hero { margin-bottom: 20px; }
+
+.vs-hero h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.vs-hero p {
+  color: var(--muted);
+  margin-top: 8px;
+  font-size: 0.92rem;
+}
+
+.vs-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.vs-tab {
+  flex: 1;
+  min-width: 96px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.vs-tab.is-active {
+  color: var(--text);
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.18);
+}
+
+.vs-panel { display: none; }
+.vs-panel.is-active { display: block; }
+
+.vs-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vs-card h2 {
+  font-size: 1.05rem;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.vs-checklist ul {
+  list-style: none;
+  margin-bottom: 8px;
+}
+
+.vs-checklist li {
+  padding: 6px 0 6px 18px;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.vs-checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.85em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.vs-note, .vs-pc-hint, .vs-hint {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 8px 0;
+}
+
+.vs-pc-hint { color: var(--warn); }
+
+.vs-form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .vs-form-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.vs-card label, .vs-form-grid label, .vs-slider-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.vs-card input[type="number"],
+.vs-card input[type="range"],
+.vs-card select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--card);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.vs-check {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.vs-check input { width: auto; accent-color: var(--primary); }
+
+.vs-advanced { margin-top: 8px; font-size: 0.9rem; }
+.vs-advanced summary { cursor: pointer; color: var(--muted); }
+
+.vs-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.vs-chip {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--card);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.vs-chip.is-on {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(34, 211, 238, 0.16);
+}
+
+.vs-result-sens {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.vs-result-sens-sm { font-size: 1.35rem; }
+.vs-result-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; }
+
+.vs-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  margin: 12px 0;
+}
+
+.vs-stats dt { font-size: 0.78rem; color: var(--muted); }
+.vs-stats dd { font-size: 1rem; font-weight: 600; }
+
+.vs-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.vs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.vs-btn:active { transform: scale(0.98); }
+.vs-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.vs-btn-primary { background: var(--primary); color: #fff; }
+.vs-btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.vs-file-btn { cursor: pointer; }
+
+.vs-table-wrap { overflow-x: auto; }
+.vs-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.vs-table th, .vs-table td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.vs-table th { color: var(--muted); font-weight: 500; }
+
+.vs-history-list {
+  list-style: none;
+  margin-top: 12px;
+}
+
+.vs-history-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
+}
+
+.vs-history-list button {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.vs-round-meta { font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+
+.vs-stage-card { padding: 12px; }
+
+.vs-play-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px 10px;
+}
+
+.vs-stage {
+  position: relative;
+  background: #070d18;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  aspect-ratio: 16 / 9;
+}
+
+.vs-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.vs-stage.is-locked canvas { cursor: none; }
+
+.vs-stage-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(7, 13, 24, 0.78);
+  text-align: center;
+  padding: 20px;
+  z-index: 2;
+}
+
+.vs-stage-overlay[hidden] { display: none !important; }
+
+.vs-overlay-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.vs-disclaimer {
+  margin-top: 24px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.vs-hint { color: var(--accent); }
+
+@media (max-width: 640px) {
+  .vs-stage { aspect-ratio: 4 / 3; }
+}

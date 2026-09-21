@@ -5,13 +5,15 @@ alwaysApply: true
 
 # 个人站红线
 
-详细计划见根目录 `改进计划.md`。冲突时以该文档第 0 节关键词为准。
+详细计划见 `cursor/改进计划.md`。冲突时以该文档第 0 节关键词为准。
 
 - **单域名**：只部署 Cloudflare Pages 项目 `cursor-personality-test`。新功能是新路径，不是新站点。
 - **`/` 是个人首页**（介绍 + 搜索 + 卡片），测评在 `/personality/`。
-- **功能即页面**：一个功能一个目录。禁止把新功能塞进 `personality-test.html`。
-- **目录驱动**：首页卡片和搜索只来自 `catalog`（规划中的 `js/catalog.js`）。加功能必须登记 name / aliases / tags / summary / path。
+- **功能即页面**：Vite 多入口 MPA。一个功能 = `apps/web/<id>/index.html` + `apps/web/src/<id>/`。禁止把新功能塞进测评页，禁止改成单 SPA 吃掉可分享路径。
+- **目录驱动**：首页卡片和搜索只来自 `apps/web/src/shared/catalog/index.ts`。加功能必须登记 name / aliases / tags / summary / path。
 - **本地优先**：测评、抽奖、单机笔记用 `localStorage`，键名 `hao.<id>.v1`。禁止两功能共用一个键。
-- **按需后端**：只有「别人要看见同一份数据」才用 D1（留言）。不要给测评加登录。
-- **留言**：Turnstile + 先审后发。密钥只放 Pages 环境变量。
+- **按需后端**：一期 `apps/api` 只预留 Fastify + Prisma 骨架（`/health`），无业务接口。只有「别人要看见同一份数据」才加路由。不要给测评加登录。
+- **公网 API**：浏览器只请求同源 `/api/*`，由 `functions/api/[[path]].ts` 反代到 `API_ORIGIN`。密钥不进前端。
+- **留言**（尚未上线）：Turnstile + 先审后发。密钥只放环境变量。
 - **手机电脑同一套页面**。发布后分享 `*.pages.dev` 路径，不要发 GitHub blob 链接。
+- **文档随功能**：每个功能目录必须有 `功能文档.md`，且含「可拓展」节。写法见 `.cursor/skills/add-site-feature/SKILL.md`。禁止只交代码不交文档。

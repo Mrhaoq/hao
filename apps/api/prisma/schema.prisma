@@ -1,0 +1,11 @@
+# Prisma 占位。一期不建业务表、不连库。
+# 留言 / 同步笔记等需要持久化时，再加 datasource 与 model。
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}

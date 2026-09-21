@@ -23,6 +23,7 @@ const AimEngine = (function () {
   let onPause = null;
   let wantResume = false;
   let overlayAction = null;
+  let lockAt = 0;
 
   function sizeCanvas() {
     if (!canvas || !stage) return;
@@ -101,6 +102,7 @@ const AimEngine = (function () {
     locked = isPointerLocked();
     if (stage) stage.classList.toggle('is-locked', locked);
     if (locked) {
+      lockAt = performance.now();
       hideOverlay();
       if (wantResume && running && paused) {
         AimTimer.resume(timer);
@@ -169,8 +171,17 @@ const AimEngine = (function () {
     ctx.textAlign = 'left';
     ctx.fillStyle = '#94a3b8';
     ctx.font = '12px system-ui, sans-serif';
-    const hits = mode && mode.stats ? mode.stats().hits : 0;
-    ctx.fillText('命中 ' + hits + '  ·  碰到即得分  ·  灵敏度 ' + SensMath.formatSensGame(sens), 12, cssSize().h - 18);
+    const st = mode && mode.stats ? mode.stats() : null;
+    const needsFire = mode && mode.needsFire;
+    let line = '灵敏度 ' + SensMath.formatSensGame(sens);
+    if (needsFire && st) {
+      const hs = st.headshots || 0;
+      const shots = st.shots || 0;
+      line = '爆头 ' + hs + ' / 开枪 ' + shots + '  ·  左键开火  ·  ' + line;
+    } else if (st) {
+      line = '贴住头部计分  ·  本关不用开枪  ·  ' + line;
+    }
+    ctx.fillText(line, 12, cssSize().h - 18);
     ctx.restore();
   }
 
@@ -249,9 +260,16 @@ const AimEngine = (function () {
     wantResume = true;
     lastTs = 0;
     lastMove = 0;
+    lockAt = 0;
     AimTimer.start(timer, performance.now());
     AimTimer.pause(timer, performance.now());
-    showOverlay(opts.overlayTitle || '点击锁定鼠标', opts.overlaySub || '准星碰到靶即命中，不需要点击。倒计时在锁定后才会走。', '锁定鼠标并开始', true);
+    const hint = AimModes.fireHint(modeKind);
+    showOverlay(
+      opts.overlayTitle || '点击锁定鼠标',
+      opts.overlaySub || (hint + '。倒计时在锁定后才会走。'),
+      '锁定鼠标并开始',
+      true
+    );
   }
 
   function stop() {
@@ -299,6 +317,16 @@ const AimEngine = (function () {
     });
     canvas.addEventListener('click', function () {
       if (overlay && !overlay.hidden) tryBegin();
+    });
+    canvas.addEventListener('mousedown', function (e) {
+      if (e.button !== 0) return;
+      if (overlay && !overlay.hidden) return;
+      if (!running || paused || !isPointerLocked()) return;
+      if (performance.now() - lockAt < 280) return;
+      if (mode && mode.fire) {
+        const size = cssSize();
+        mode.fire(performance.now(), camera, size.w, size.h, lastMove);
+      }
     });
     canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     if (!raf) raf = requestAnimationFrame(loop);

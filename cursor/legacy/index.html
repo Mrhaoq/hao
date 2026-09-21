@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hao 的工具</title>
+  <link rel="stylesheet" href="css/shell.css" />
+</head>
+<body>
+  <main class="shell-main">
+    <header class="shell-hero">
+      <h1 id="site-title">Hao 的工具</h1>
+      <p id="site-tagline">个人站点。测评、抽奖、笔记和以后的小工具，都在这一个网址里。</p>
+    </header>
+    <div id="catalog-grid" class="shell-grid"></div>
+    <footer class="shell-footer">
+      <p>数据默认只存在你的浏览器。测评入口也在「多维度人格测评」卡片里。</p>
+    </footer>
+  </main>
+  <script src="js/catalog.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/shell.js"></script>
+  <script>
+    document.getElementById('site-title').textContent = Catalog.SITE.name;
+    document.getElementById('site-tagline').textContent = Catalog.SITE.tagline;
+    document.title = Catalog.SITE.name;
+    Shell.inject({ search: true });
+    CatalogSearch.bindHome('catalog-grid', 'catalog-search');
+  </script>
+</body>
+</html>
