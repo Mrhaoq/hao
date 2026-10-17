@@ -5,7 +5,6 @@ __pycache__/
 node_modules/
 .env
 data/
-文稿/
 *.db
 .DS_Store
 Thumbs.db

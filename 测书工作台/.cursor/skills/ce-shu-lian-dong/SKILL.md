@@ -64,6 +64,8 @@ C 盘 `文稿/` 是旧草稿，不要当正式稿。
 | `.cursor/skills/ce-shu-lian-dong/SKILL.md` | 本清单。关联文件增减先改这里 |
 | `.cursor/rules/ceshu-kai-shu.mdc` | 每次对话都生效的硬约束 |
 | `.cursor/skills/kai-shu/SKILL.md` | 开一本新书时怎么写 `设定.md` |
+| `.cursor/skills/shen-kong-bu-ding-xie-gao/SKILL.md` | 《深空补丁》特例：Cursor 直接写正文+台账，不经豆包；只服务第 9 本 |
+| `.cursor/skills/shen-kong-bu-ding-xie-gao/SKILL.md` | 《深空补丁》专书：Cursor 直接写正文落盘（不经豆包），分层记忆与段末对账 |
 | `docs/PLAYBOOK.md` | 生产线说明，数字必须等于 `playbook.js` |
 | `README.md` | 对外一句话 |
 | `server/playbook.js` | 锁定数字、六阶段和 `evaluate()` |
