@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>测书工作台</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside>
+      <div class="brand">
+        <p class="eyebrow">v1 锁定 · 番茄测书</p>
+        <h1>测书工作台</h1>
+        <p id="slotHint" class="muted">在产 0 / 3</p>
+      </div>
+      <button id="newBookBtn" class="primary" type="button">开一本测书</button>
+      <nav id="bookList" class="book-list"></nav>
+      <button id="requestsBtn" class="ghost" type="button">请求记录</button>
+      <button id="settingsBtn" class="ghost" type="button">设置 API</button>
+    </aside>
+    <main>
+      <div id="reqBar" class="reqbar hidden">
+        <span id="reqText"></span>
+        <button id="reqCancel" class="small" type="button">取消</button>
+      </div>
+      <section id="requestView" class="hidden">
+        <div class="row-head">
+          <h2>请求记录</h2>
+          <label class="inline">按书筛选
+            <select id="reqFilter"><option value="">全部</option></select>
+          </label>
+          <button id="reqRefresh" class="small" type="button">刷新</button>
+        </div>
+        <p id="reqSummary" class="muted"></p>
+        <table>
+          <thead>
+            <tr><th>时间</th><th>书</th><th>动作</th><th>模型</th><th>接口</th><th>耗时</th><th>输入/输出 token</th><th>花费</th><th>结果</th></tr>
+          </thead>
+          <tbody id="reqTable"></tbody>
+        </table>
+      </section>
+      <section id="emptyState" class="panel empty">
+        <h2>先定简介，再写到 30 万字裁决</h2>
+        <p>每本测书先写约 60 字简介，再写到约 30 万字（核心事件闭环），发布后录入番茄后台数字，用继续 / 停更 / 再观察裁决。数据好可按需加 5～30 万字续写；数据差可用 6～10 章短收尾；观察期内不加更。每章 1800～2500 字。</p>
+        <button id="emptyNewBtn" class="primary" type="button">开一本测书</button>
+      </section>
+      <section id="bookView" class="hidden">
+        <header class="book-head">
+          <div>
+            <p id="bookStatus" class="status"></p>
+            <input id="bookTitle" class="title-input" />
+            <p id="bookMeta" class="muted"></p>
+            <div id="statusActions" class="status-actions hidden">
+              <button id="startDraftBtn" class="primary" type="button">开始写正文</button>
+              <button id="finishCloseBtn" type="button">收尾完成</button>
+            </div>
+          </div>
+          <div class="caps">
+            <div class="cap">
+              <span>字数</span>
+              <strong id="wordCapLabel"></strong>
+              <div class="bar"><i id="wordBar"></i></div>
+            </div>
+            <div class="cap">
+              <span>API 费用</span>
+              <strong id="costCapLabel"></strong>
+              <div class="bar"><i id="costBar"></i></div>
+            </div>
+          </div>
+        </header>
+        <section class="host">
+          <div class="row-head">
+            <h3>手动续写</h3>
+            <p id="pasteLabel" class="muted">工作台只准备提示词。你复制到豆包，再把回复贴回来。</p>
+          </div>
+          <p id="promptMeta" class="muted"></p>
+          <p id="promptWarn" class="warn hidden"></p>
+          <label>题材或一句话方向<textarea id="directionInput" rows="2" placeholder="例如：都市悬疑，夜市摊主捡到会报死者名字的铜钱"></textarea></label>
+          <div class="row-head">
+            <button id="refreshPromptBtn" class="primary" type="button">准备下一段提示词</button>
+            <button id="copyPromptBtn" type="button">复制提示词</button>
+            <button id="forceMemoryBtn" type="button">重大转折：刷新完整前情</button>
+            <button id="undoPasteBtn" type="button">撤销最近一次贴回</button>
+          </div>
+          <label>提示词<textarea id="promptOutput" rows="8" readonly></textarea></label>
+          <label>豆包的回复<textarea id="pasteInput" rows="8" placeholder="把豆包的原文贴在这里，不要改格式"></textarea></label>
+          <div class="row-head">
+            <button id="pasteBtn" class="primary" type="button">贴回并整理</button>
+            <p class="muted">章节建议 1800～2500 字，仅提示不拦提交</p>
+          </div>
+        </section>
+        <div class="tabs" id="tabs">
+          <button data-tab="setup" class="on" type="button">设定</button>
+          <button data-tab="beats" type="button">大纲</button>
+          <button data-tab="chapters" type="button">章节</button>
+          <button data-tab="metrics" type="button">数据</button>
+          <button data-tab="verdict" type="button">裁决</button>
+        </div>
+        <div id="tab-setup" class="tab">
+          <label>标签</label>
+          <input id="genreInput" placeholder="番茄标签，如：都市脑洞 / 玄幻 / 女频言情" />
+          <label>主题</label>
+          <textarea id="themeInput" rows="2" placeholder="一句话主题，和开书方向相同"></textarea>
+          <div class="row-head">
+            <label for="pitchInput">简介</label>
+            <p id="pitchCount" class="muted">0 / 60 字（50～70）</p>
+          </div>
+          <textarea id="pitchInput" rows="4" placeholder="约 60 字：谁、处境、要什么、最强阻碍、为何翻下一章"></textarea>
+          <button id="savePitchBtn" type="button">保存封面信息</button>
+          <div id="pendingBox" class="pending hidden">
+            <div class="row-head">
+              <h3>待确认卡片 <span id="pendingCount" class="muted"></span></h3>
+              <div>
+                <button id="pendingConfirmSel" class="small" type="button">确认勾选</button>
+                <button id="pendingRejectSel" class="small" type="button">驳回勾选</button>
+                <button id="pendingConfirmAll" class="small primary" type="button">全部确认</button>
+              </div>
+            </div>
+            <p class="muted">来自贴回、整理或章节验收。确认后才进卡片库，才会被注入提示词。</p>
+            <div id="pendingList"></div>
+          </div>
+          <div class="grid3">
+            <div>
+              <div class="row-head"><h3>人物卡</h3><button data-add="characters" class="small" type="button">加一张</button></div>
+              <div id="charList"></div>
+            </div>
+            <div>
+              <div class="row-head"><h3>世界规则</h3><button data-add="world_entries" class="small" type="button">加一条</button></div>
+              <div id="worldList"></div>
+            </div>
+            <div>
+              <div class="row-head"><h3>伏笔</h3><button data-add="foreshadows" class="small" type="button">加一条</button></div>
+              <div id="fsList"></div>
+            </div>
+            <div>
+              <div class="row-head"><h3>关系</h3><button data-add="relations" class="small" type="button">加一条</button></div>
+              <div id="relList"></div>
+            </div>
+            <div>
+              <div class="row-head"><h3>地点势力</h3><button data-add="places" class="small" type="button">加一条</button></div>
+              <div id="placeList"></div>
+            </div>
+            <div>
+              <div class="row-head"><h3>道具 / 金手指</h3><button data-add="items" class="small" type="button">加一条</button></div>
+              <div id="itemList"></div>
+            </div>
+          </div>
+          <h3>时间线 <span class="muted">（由章节摘要自动生成，只读）</span></h3>
+          <pre id="timelineBox" class="timeline"></pre>
+        </div>
+        <div id="tab-beats" class="tab hidden">
+          <div class="row-head">
+            <p class="muted">0–3 承诺 · 3–8 蓄力 · 8–12 第一次回报 · 12–20 加压 · 20–26 锁定 · 26–30 裁决</p>
+            <button id="genBeatsBtn" class="primary" type="button">按简介生成大纲</button>
+          </div>
+          <p id="beatProgress" class="muted"></p>
+          <div id="beatList"></div>
+          <h3>续写段</h3>
+          <p class="muted">裁决「继续」后出现。先贴回续写段大纲再续章；段末 2 万字收束。</p>
+          <div id="segmentList"></div>
+        </div>
+        <div id="tab-chapters" class="tab hidden">
+          <div class="generate-box">
+            <label>本章必须推进（不填则按当前阶段大纲续）</label>
+            <textarea id="chapterGoal" rows="2"></textarea>
+            <p class="muted">勾选的卡片优先注入，「准备下一段提示词」和「生成下一章」都用。不勾选时自动带主角、未回收伏笔、两条规则，以及提到这些人物的关系/地点/道具。</p>
+            <div id="injectPick" class="inject"></div>
+            <div class="row-head">
+              <button id="genChapterBtn" class="primary" type="button">生成下一章</button>
+              <button id="addBlankChapterBtn" type="button">手工空章</button>
+              <button id="openFolderBtn" type="button">打开正文文件夹</button>
+              <a id="exportLink" href="#">导出正文</a>
+            </div>
+          </div>
+          <div id="chapterList"></div>
+        </div>
+        <div id="tab-metrics" class="tab hidden">
+          <p class="muted">从番茄作家后台手工抄。不要对接口。满 7 天再裁决。刚出现的读完率前 3 天不要单独当停更依据。</p>
+          <form id="metricForm" class="metric-form">
+            <label>日期<input name="recorded_on" type="date" required /></label>
+            <label>阅读人数<input name="readers" type="number" min="0" /></label>
+            <label>追更人数<input name="follow_readers" type="number" min="0" /></label>
+            <label>加书架<input name="shelves" type="number" min="0" /></label>
+            <label>10万字读完率%<input name="readthrough_10w" type="number" step="0.1" /></label>
+            <label>30万字读完率%<input name="readthrough_30w" type="number" step="0.1" /></label>
+            <label>万字时长（分钟）<input name="minutes_per_10k" type="number" step="0.1" /></label>
+            <label class="grow">备注<input name="note" /></label>
+            <button type="submit" class="primary">记一笔</button>
+          </form>
+          <table>
+            <thead>
+              <tr>
+                <th>日期</th><th>阅读</th><th>追更</th><th>追读率</th><th>书架</th><th>10万读完</th><th>30万读完</th><th>万字时长</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="metricTable"></tbody>
+          </table>
+        </div>
+        <div id="tab-verdict" class="tab hidden">
+          <div id="verdictBox" class="verdict"></div>
+          <p id="dataDays" class="muted"></p>
+          <label>裁决备注</label>
+          <textarea id="decisionNote" rows="2" placeholder="为什么按或为什么不按建议"></textarea>
+          <div class="row-head actions">
+            <label class="inline">继续时加字数
+              <select id="continueWords"></select>
+            </label>
+            <label class="inline hidden" id="continueCustomWrap">自定义（万字）
+              <input id="continueCustom" type="number" min="5" step="1" value="10" />
+            </label>
+          </div>
+          <div class="row-head actions">
+            <button id="evalBtn" type="button">按打法重算</button>
+            <button id="goContinue" class="ok" type="button">继续：加字数</button>
+            <button id="goWatch" type="button">再观察 7 天</button>
+            <button id="goStop" class="danger" type="button">停更：进入短收尾</button>
+          </div>
+          <h3>裁决历史</h3>
+          <table>
+            <thead><tr><th>时间</th><th>裁决</th><th>当时字数</th><th>加字数</th><th>备注</th></tr></thead>
+            <tbody id="decisionTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="newBookDlg">
+    <form method="dialog" class="dlg">
+      <h3>开一本测书</h3>
+      <label>书名<input id="newTitle" required /></label>
+      <label>标签<input id="newGenre" placeholder="如：都市脑洞 / 玄幻" /></label>
+      <label>主题<textarea id="newTheme" rows="2" placeholder="一句话方向"></textarea></label>
+      <label>简介（约 60 字）<textarea id="newPitch" rows="3" placeholder="谁、处境、要什么、最强阻碍、为何翻下一章"></textarea></label>
+      <menu>
+        <button value="cancel" type="submit">取消</button>
+        <button id="createBookBtn" class="primary" value="default" type="submit">创建（候选，不占槽）</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDlg">
+    <form method="dialog" class="dlg">
+      <h3>模型设置</h3>
+      <p class="muted" id="settingsHint">Key 只存在本机 data 库和 .env，不上传平台。</p>
+      <label>API Key<input id="apiKey" type="password" placeholder="留空表示不改" /></label>
+      <label>接口地址<input id="apiBase" /></label>
+      <label>模型<input id="apiModel" /></label>
+      <p id="testResult" class="muted"></p>
+      <menu>
+        <button value="cancel" type="submit">关闭</button>
+        <button id="testConnBtn" type="button">测试连接（先保存）</button>
+        <button id="saveSettingsBtn" class="primary" value="default" type="submit">保存</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "ceshu-workbench",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --import ./server/test-env.js server/playbook.test.js && node --import ./server/test-env.js server/nightly.test.js && node --import ./server/test-env.js server/cover-text.test.js && node --import ./server/test-env.js server/paste.test.js && node --import ./server/test-env.js server/files.test.js && node --import ./server/test-env.js server/book-ops.test.js && node --import ./server/test-env.js server/requests.test.js"
+  },
+  "dependencies": {
+    "playwright": "^1.56.0"
+  }
+}
